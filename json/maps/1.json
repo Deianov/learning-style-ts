@@ -1,0 +1,15 @@
+{
+    "exercise": {
+        "id": 1,
+        "path": "maps/1",
+        "name": "Die deutschen Bundesländer",
+        "category": "Germany",
+        "description": "-",
+        "source": "tutorial;Land (Deutschland)",
+        "sourceUrl": "https://www.mediaevent.de/tutorial/svg.html;https://de.wikipedia.org/wiki/Land_(Deutschland)",
+        "author": "mediaevent.de;wikipedia.org",
+        "authorUrl": "https://www.mediaevent.de;https://de.wikipedia.org",
+        "createdBy": null
+    },
+    "props": {"resource": "maps-de.js", "resource_full": "maps-de-full.js"}
+}
