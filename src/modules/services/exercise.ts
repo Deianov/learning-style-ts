@@ -19,7 +19,7 @@ export abstract class ExerciseService {
         // skip index 0
         const fileName: string = SERVICE_FILES_BY_ID[router.index || 1];
 
-        // dynamic import - maps service
+        // dynamic import
         const ctor = await factory.importClass<ExercisePlay>(PATH_SERVICES, fileName);
         const instance = await factory.getInstance(ctor);
 
