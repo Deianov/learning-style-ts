@@ -27,8 +27,8 @@ import objects from '../utils/objects.js';
 
  * Notify.defaultInit()
      * msg
-         notify.msg("error", "Tish is an error!")
-         notify.msg("error", "Tish is an error!", {prefix: ""})
+         notify.msg("error", "This is an error!")
+         notify.msg("error", "This is an error!", {prefix: ""})
          notify.with("msg").render("error", "This is an error!");
          notify.with("msg").options.prefix = "";                    // change default options
      * alert

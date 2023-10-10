@@ -1,3 +1,5 @@
+import {TagName} from './types/utils.js';
+
 // CONSTANTS: SYSTEM
 export const IS_MOBILE = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 export const IS_DARK_MODE = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -79,10 +81,12 @@ export const PATH_JSON = './json';
     <footer>
             <span id="cdate">
 */
-export const DOM_PAGEHEADER_TAGNAME = 'header';
+// type ClassName = 'navbar' | 'breadcrumb' | 'subject' | 'notify-box';
+
+export const DOM_PAGEHEADER_TAGNAME: TagName = 'header';
 export const DOM_MENU_CLASSNAME = 'navbar';
-export const DOM_TOPICS_PARENT_TAGNAME = 'aside';
-export const DOM_ARTICLE_TAGNAME = 'article';
+export const DOM_TOPICS_PARENT_TAGNAME: TagName = 'aside';
+export const DOM_ARTICLE_TAGNAME: TagName = 'article';
 export const DOM_HEADER_ID = 'header';
 export const DOM_CONTROL_ID = 'control';
 export const DOM_CONTENT_ID = 'content';
@@ -90,7 +94,7 @@ export const DOM_MESSAGES_ID = 'messages';
 export const DOM_BOTTOM_ID = 'bottom';
 export const DOM_CDATE_ID = 'cdate';
 export const DOM_BREADCRUMB_CLASSNAME = 'breadcrumb';
-export const DOM_BREADCRUMB_TAGNAME = 'ul';
+export const DOM_BREADCRUMB_TAGNAME: TagName = 'ul';
 export const DOM_SUBJECT_CLASSNAME = 'subject';
 export const DOM_NOTIFY_CLASSNAME = 'notify-box';
 

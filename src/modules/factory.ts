@@ -1,4 +1,4 @@
-import {EventType, Type, TypeWithArgs} from './types/utils.js';
+import {MouseEvents, Type, TypeWithArgs} from './types/utils.js';
 
 // CONSTANTS: MODULES - relative paths to factory
 export const PATH_SERVICES: string = './services/';
@@ -7,7 +7,7 @@ export const PATH_RESOURCES_MAPS: string = './components/maps/';
 interface Props {
     instance?: any;
     path?: string;
-    eventType?: EventType;
+    eventType?: MouseEvents;
     event?: EventListenerOrEventListenerObject;
 }
 
@@ -54,7 +54,7 @@ export const factory = (function () {
         dictionary[name] = props;
 
         if (props.event && props.eventType) {
-            instance.setEvent(props.eventType, props.event || EventType.click);
+            instance.setEvent(props.eventType, props.event);
         }
     }
 

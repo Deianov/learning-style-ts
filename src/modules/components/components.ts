@@ -1,12 +1,12 @@
 import {DOM_BOTTOM_ID, DOM_BREADCRUMB_CLASSNAME, DOM_BREADCRUMB_TAGNAME, DOM_HEADER_ID} from '../constants.js';
 import {Links} from '../types/components.js';
-import {EventType} from '../types/utils.js';
+import {MouseEvents, TagName} from '../types/utils.js';
 import dom from '../utils/dom.js';
 
 class MyEvent {
     private eventChildIndex: number;
     private eventElement: HTMLElement | undefined;
-    private eventType: EventType = EventType.click;
+    private eventType: MouseEvents = 'click';
     private eventCallback: EventListener | EventListenerObject | undefined;
     private eventWaiting: boolean = false;
     constructor() {
@@ -19,7 +19,7 @@ class MyEvent {
     setEventWaiting(v: boolean) {
         this.eventWaiting = v;
     }
-    setEventByElement(e: HTMLElement, type: EventType, callback: EventListenerOrEventListenerObject, index?: number) {
+    setEventByElement(e: HTMLElement, type: MouseEvents, callback: EventListenerOrEventListenerObject, index?: number) {
         this.eventChildIndex = typeof index === 'number' ? index : -1;
         this.setEventElement(e);
         this.eventType = type;
@@ -53,11 +53,11 @@ class Component extends MyEvent {
     private disabled: boolean = false;
     /**
      * @param {string | HTMLElement} parent Static HTMLElement (ID or Element)
-     * @param {string} wrapper (Optional) className
+     * @param {string | undefined} wrapper (Optional) className
      * @param {TagName} tagName (Element)
      * @param {string} className (Element)
      */
-    constructor(parent: string | HTMLElement, wrapper: string | undefined, tagName = 'div', className: string) {
+    constructor(parent: string | HTMLElement, wrapper: string | undefined, tagName: TagName = 'div', className: string) {
         super();
         // todo: !
         this._parent = dom.get(parent)!;
@@ -131,11 +131,11 @@ class Component extends MyEvent {
         }
     }
     /**
-     * @param {EventType} type
+     * @param {MouseEvents} type
      * @param {EventListener | EventListenerObject} callback
      * @param {number} index (Optional) Set to child element by Index
      */
-    setEvent(type: EventType, callback: EventListenerOrEventListenerObject, index?: number): void {
+    setEvent(type: MouseEvents, callback: EventListenerOrEventListenerObject, index?: number): void {
         super.setEventByElement(this.element, type, callback, index);
     }
 }
@@ -239,12 +239,11 @@ function scrollEvent() {
     </div>
 */
 class Tags extends Component {
-    private static DOM_TAGS_TAGNAME = 'div';
     private static DOM_TAGS_CLASSNAME = 'tags';
     private static DOM_TAGS_ITEM_CLASSNAME = 'tag';
     private static DOM_TAGS_HEADER_CLASSNAME = 'heading';
     constructor(parent = DOM_BOTTOM_ID) {
-        super(parent, undefined, Tags.DOM_TAGS_TAGNAME, Tags.DOM_TAGS_CLASSNAME);
+        super(parent, undefined, 'div', Tags.DOM_TAGS_CLASSNAME);
     }
     render() {
         const tmp: {text: string; tags: Links} = {

@@ -1,12 +1,11 @@
 import {router} from '../../main.js';
-import {EventType} from '../types/utils.js';
 
 export class Menu {
     private element: HTMLElement;
     private active: HTMLElement | null = null;
     constructor(element: HTMLElement) {
         this.element = element;
-        this.element.addEventListener(EventType.click, this);
+        this.element.addEventListener('click', this);
     }
     click(e: HTMLElement | null) {
         if (e) {
@@ -24,7 +23,7 @@ export class Menu {
         this.click(this.element.querySelector(`a[value = "${index}"]`));
     }
     async handleEvent(e: Event) {
-        if (e.type === EventType.click) {
+        if (e.type === 'click') {
             await this.onclick(e.target as HTMLElement);
         }
     }

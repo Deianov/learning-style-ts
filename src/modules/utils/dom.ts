@@ -1,4 +1,5 @@
-type TagName = keyof HTMLElementTagNameMap;
+import {TagName} from '../types/utils.js';
+
 type Opt = string | Record<string, any>;
 
 const dom = {

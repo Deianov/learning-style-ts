@@ -16,14 +16,15 @@ export interface TypeWithArgs<T, A extends any[]> extends Function {
 /** Class - variant 2 */
 export type Class = {new (...args: any[]): any};
 
-// events
-export enum EventType {
-    click = 'click',
-}
+// EVENTS
+export type MouseEvents = 'click' | 'dblclick' | 'mouseup' | 'mousedown';
 
-type EventCallback = (this: HTMLElement) => any;
+// type EventCallback = (this: HTMLElement) => any;
 
 // interface for dynamic prototype method
 interface Notify {
     [key: string]: (status: string | null, text: string, options: object) => void;
 }
+
+// DOM
+export type TagName = keyof HTMLElementTagNameMap;
