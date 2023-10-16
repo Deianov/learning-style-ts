@@ -12,14 +12,15 @@ export const APP_NAME = 'learning-style';
 export const APP_TITLE = 'Learning-Style';
 export const APP_IS_STATIC = true;
 export const production = false;
-export const APP_STATE = production ? 'production' : 'development';
 export const APP_VERSION = '30.09.2023';
 export const APP_LANG = 'en';
 /** keyboard - 0: default, 1: virtual, 2: virtual (only word keys) **/
 export const APP_KEYBOARD = IS_MOBILE ? 1 : 0;
 
 // CONSTANTS: DEVELOPMENT STATE
-export let INFO_STRING = `state: ${APP_IS_STATIC}, version: ${APP_VERSION} (${APP_IS_STATIC ? 'static' : 'api'}), `;
+export let INFO_STRING = `state: ${production ? 'production' : 'development'}, version: ${APP_VERSION} (${
+    APP_IS_STATIC ? 'static' : 'api'
+}), `;
 INFO_STRING += IS_MOBILE ? 'mobile OS: ' : 'OS: ';
 INFO_STRING += navigator.userAgent;
 INFO_STRING += IS_DARK_MODE ? ', DarkMode' : '';
