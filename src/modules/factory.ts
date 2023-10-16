@@ -1,14 +1,15 @@
-import {MouseEvents, Type, TypeWithArgs} from './types/utils.js';
+import {EventCallback, MouseEvents, Type, TypeWithArgs} from './types/utils.js';
 
 // CONSTANTS: MODULES - relative paths to factory
 export const PATH_SERVICES: string = './services/';
 export const PATH_RESOURCES_MAPS: string = './components/maps/';
 
 interface Props {
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     instance?: any;
     path?: string;
     eventType?: MouseEvents;
-    event?: EventListenerOrEventListenerObject;
+    event?: EventCallback;
 }
 
 export const factory = (function () {
@@ -24,8 +25,8 @@ export const factory = (function () {
      * The factory defines the `getInstance' method, which takes care of
      * accessing the unique singleton instance.
      *
-     * @param {Function} ctor  Constructor
-     * @returns {Function} singleton instance of class
+     * @param {Type<T>} ctor  Constructor
+     * @returns {Promise<Awaited<T>>} singleton instance of class
      */
     // todo: asynchronous ?
     async function getInstance<T>(ctor: Type<T>): Promise<Awaited<T>> {
@@ -48,6 +49,7 @@ export const factory = (function () {
         return instance;
     }
 
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     function saveInstance(name: string, instance: any): void {
         const props: Props = dictionary[name] || {};
         props.instance = instance;

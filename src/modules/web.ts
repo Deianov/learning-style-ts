@@ -1,9 +1,9 @@
-import {IS_MOBILE} from './constants';
-import {toBase64, toUTF8} from './utils/strings.js';
+import { IS_MOBILE } from './constants';
+import { toBase64, toUTF8 } from './utils/strings.js';
 
 interface Storage {
     getItem(key: string): string | null;
-    setItem(key: string, data: string, options?: Options): any;
+    setItem(key: string, data: string, options?: Options): void;
 }
 
 /**
@@ -42,7 +42,7 @@ export class Cookie {
      * @param {string} value
      * @param {Options} options
      */
-    static setItem(name: string, value: string, options?: Options) {
+    static setItem(name: string, value: string, options?: Options): void {
         const {expires, path, domain, secure, suffix} = options || {};
 
         const DEFAULT_DAYS = 365; // 365 * 24 * 60 * 60 = 31536000 (1 year)
@@ -71,10 +71,14 @@ export class Cookie {
     }
 
     static getItem(name: string): string {
-        let matches =
-            document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)')) || '';
-        let match = matches[1];
-        return match ? toUTF8(match) : '';
+        const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
+        for (const cookie of cookies) {
+            const [cookieName, cookieValue] = cookie.split('=');
+            if (cookieName === name) {
+                return toUTF8(cookieValue);
+            }
+        }
+        return '';
     }
 
     static delete(name: string) {

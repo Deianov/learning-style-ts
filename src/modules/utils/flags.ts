@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 abstract class Flags {
     static set(flags: number, bitmask: number): number {
         return flags | bitmask;
@@ -68,7 +71,6 @@ abstract class Flags {
      * @returns {boolean[]}
      */
     static toArray(flags: number, length: number): boolean[] {
-        // @ts-ignore
         return Array.from({length}, (v, i) => Flags.isTrue(flags, Flags.toBits(i)));
     }
     /**

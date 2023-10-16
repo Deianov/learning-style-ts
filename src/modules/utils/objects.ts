@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 const objects = {
     isObject(obj: object) {
         return obj && typeof obj === 'object' && !Array.isArray(obj);

@@ -53,12 +53,7 @@ export function toBase64(utf8String: string): string {
 }
 
 export function removeHTML(str: string): string {
-    return str
-        .replace(/&/g, '')
-        .replace(/</g, '')
-        .replace(/"/g, '')
-        .replace(/'/g, '')
-        .replace(/`/g, '');
+    return str.replace(/&/g, '').replace(/</g, '').replace(/"/g, '').replace(/'/g, '').replace(/`/g, '');
 }
 
 /** Masks middle characters in string
@@ -69,16 +64,12 @@ export function removeHTML(str: string): string {
  */
 export function maskMiddleChars(str: string, char: string): string {
     let len;
-    let text = str || '';
+    const text = str || '';
     return strings
         .split(text.toLowerCase())
         .map((w) => {
             len = w.length;
-            return len > 3
-                ? w.charAt(0) + char.repeat(len - 2) + w.slice(-1)
-                : len > 2
-                ? w.charAt(0) + char.repeat(len - 1)
-                : w;
+            return len > 3 ? w.charAt(0) + char.repeat(len - 2) + w.slice(-1) : len > 2 ? w.charAt(0) + char.repeat(len - 1) : w;
         })
         .join('');
 }

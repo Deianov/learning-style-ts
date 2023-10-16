@@ -9,7 +9,8 @@ const inMemoryRepository = (function () {
     const files: {[key: string]: Cashable} = {};
     return {
         existsByName(name: string): boolean {
-            return files.hasOwnProperty(name);
+            // return files.hasOwnProperty(name);
+            return Object.prototype.hasOwnProperty.call(files, 'bar');
         },
         getByName(name: string): Cashable {
             return files[name];

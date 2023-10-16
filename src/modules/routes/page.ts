@@ -2,6 +2,7 @@ import {breadcrumb, notify, router} from '../../main.js';
 import {subject} from '../components/subject.js';
 import * as C from '../constants.js';
 import {ExerciseInfoModel} from '../types/models.js';
+import {CallbackWithArgs} from '../types/utils.js';
 import dom from '../utils/dom.js';
 
 export class Page {
@@ -65,7 +66,10 @@ export class Page {
         }
         this.active = flag;
     }
-    async renderContent(callback: Function, args?: object) {
+    async renderContent(callback: CallbackWithArgs, args?: object) {
         await callback(Page.elements['content'], args);
     }
+    // async renderContent(callback: (...args: any[]) => any, args?: object) {
+    //     await callback(Page.elements['content'], args);
+    // }
 }

@@ -115,7 +115,7 @@ class Router {
         if (typeof value === 'number' && value in Pages) {
             index = value;
         } else if (typeof value === 'string') {
-            if (isNaN(value as any)) {
+            if (Number.isNaN(Number(value))) {
                 const str = value.trim().toLowerCase();
                 // is page name
                 index = Object.values(Pages).indexOf(str);

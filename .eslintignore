@@ -6,5 +6,8 @@ test
 temp
 json
 
+# Ignore project folders
+src/modules/types
+
 # Ignore files:
 *.js

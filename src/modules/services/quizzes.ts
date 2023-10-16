@@ -41,8 +41,8 @@ export default class Quizzes implements ExercisePlay {
             return;
         }
 
-        let correct = Quizzes.json?.correct;
-        let props: PropsQuizModel = Quizzes.json.props as PropsQuizModel;
+        const correct = Quizzes.json?.correct;
+        const props: PropsQuizModel = Quizzes.json.props as PropsQuizModel;
         const certification: boolean = props.certification === '1';
         // server validation
         if ((!correct || certification) && !APP_IS_STATIC) {

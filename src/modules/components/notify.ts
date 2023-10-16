@@ -1,4 +1,5 @@
 import {Page} from '../routes/page.js';
+import {CallbackWithArgs} from '../types/utils.js';
 import dom from '../utils/dom.js';
 import objects from '../utils/objects.js';
 
@@ -105,7 +106,7 @@ type OptionsMsg = {
 };
 type OptionsButton = {
     capacity: number;
-    button: {label: string; func?: Function; svg?: OptionsSvg};
+    button: {label: string; func?: CallbackWithArgs; svg?: OptionsSvg};
 };
 type Options = {
     box: {className: string};
@@ -115,6 +116,7 @@ type Options = {
     svg: {svg: OptionsSvg};
     svg_fill: {svg: OptionsSvg};
 };
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type CustomOptions = Record<string, any>;
 
 const SVG_OPTIONS: OptionsSvg = {
@@ -138,7 +140,7 @@ const OPTIONS: Options = {
 };
 
 type Render = {
-    callback: Function;
+    callback: CallbackWithArgs;
     options?: {svg: OptionsSvg} | OptionsButton;
 };
 type Renders = {
@@ -188,14 +190,15 @@ class Notify {
      * @param {Type} type                       - "msg" ot "alert"
      * @param {Render} render                   - {callback, options}
      * @param {CustomOptions} options?         - options (Optional)
-     * @returns {Function} Notify.method        - f(text, options) | f(status, text, options)
+     * @returns {CallbackWithArgs} Notify.method        - f(text, options) | f(status, text, options)
 
      *   options structure
      *   {..opt, svg:{..opt}, button:{..opt, svg:{..opt}}}
      *   add/replace
      *   Msg <- Default[Type] <- render.options <- custom options ({..opt} || {.. svg:{..opt}})
      */
-    addCustomMethod(name: string, parent: HTMLElement | string, type: string, render: Render, options?: CustomOptions): Function {
+    addCustomMethod(name: string, parent: HTMLElement | string, type: string, render: Render, options?: CustomOptions): CallbackWithArgs {
+        /* eslint-disable */
         // @ts-ignore
         Notify.storage[name] = {parent};
         // notify-box element
@@ -206,9 +209,9 @@ class Notify {
         Notify.storage[name] = {parent, instance: msg};
         // notify method with dynamic name 'name'
         (Notify.prototype as any)[name] = (status: string, text: string, options?: CustomOptions) => msg.render(status, text, options);
-
         // Return the dynamic method
         return (Notify.prototype as any)[name];
+        /* eslint-enable */
     }
     with(name: string) {
         return Notify.storage[name].instance;
@@ -222,7 +225,7 @@ class Notify {
     alert(status: string, text: string, options?: CustomOptions) {
         Notify.storage['alert'].instance.render(status, text, options);
     }
-    btn(status: string, label: string, func: Function, options?: CustomOptions) {
+    btn(status: string, label: string, func: CallbackWithArgs, options?: CustomOptions) {
         // todo: test
         // const myOptions = objects.assign({}, OPTIONS.button, {button: {svg: {byStatus: null}}}, options || {}, {button: {func}});
         const myOptions = objects.assign({}, {button: {func}}, options || {});
@@ -263,13 +266,13 @@ class Notify {
 }
 
 class Msg {
-    private storage: any[];
-    private name: any;
+    private storage: HTMLElement[];
+    private name: string;
     private parent: HTMLElement | null;
-    private callback: Function;
+    private callback: CallbackWithArgs;
     private options: CustomOptions;
     private timeout: number;
-    private ticker: any;
+    private ticker: number | undefined;
     constructor(name: string, parent: HTMLElement, type: Type, render: Render, options?: CustomOptions) {
         this.storage = [];
         this.name = name;
@@ -314,7 +317,8 @@ class Msg {
     }
     update() {
         this.storage.forEach((e) => {
-            (e.getElementsByClassName('ticker')[0] || dom.element('small', e, 'ticker')).textContent = this.timeout;
+            const msg: Element = e.getElementsByClassName('ticker')[0] || dom.element('small', e, 'ticker');
+            msg.textContent = Number(this.timeout).toString();
         });
     }
     clear() {
@@ -322,9 +326,9 @@ class Msg {
         for (let i = 0; i < count; i++) {
             dom.remove(this.storage.shift());
         }
-        if (this.ticker) {
+        if (typeof this.ticker === 'number') {
             clearInterval(this.ticker);
-            this.ticker = null;
+            this.ticker = undefined;
         }
     }
 }
@@ -349,7 +353,8 @@ type TextWithTitle = {
  */
 
 function msg_symbol_prefix_text(parent: HTMLElement, status: string, text: string, options: CustomOptions): HTMLElement {
-    let {prefix, classNameItem} = options;
+    let {prefix} = options;
+    const {classNameItem} = options;
     if (typeof prefix !== 'string') {
         prefix = Prefix[status as keyof typeof Prefix];
     }

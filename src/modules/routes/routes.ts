@@ -1,13 +1,14 @@
 import {navigation, page, router, topics} from '../../main.js';
 import {APP_TITLE, DEBUG_CONTENT} from '../constants.js';
+import {Callback} from '../types/utils.js';
 
 export interface Route {
     path: string;
     name: RouteName;
     title: string;
     subject: string;
-    init?: Function;
-    render?: Function;
+    init?: Callback;
+    render?: Callback;
 }
 
 export enum Pages {

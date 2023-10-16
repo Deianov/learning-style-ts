@@ -19,12 +19,13 @@ type Meta = {
 };
 
 export class Country {
-    meta: {[key: string]: any} | undefined;
     private wrapper: HTMLElement;
     private element: HTMLElement;
     private info: HTMLElement;
     private textElement?: HTMLElement | null;
     private active?: HTMLElement | null;
+
+    public meta: Meta[] | undefined;
 
     constructor(parent: HTMLElement) {
         this.wrapper = dom.element('div', parent, 'row maps');
@@ -35,7 +36,7 @@ export class Country {
     async render(obj: Land) {
         this.reset();
         this.element.innerHTML = obj.svg;
-        this.meta = obj.meta;
+        this.meta = obj.meta as Meta[];
     }
     renderInfo(meta: Meta) {
         this.info.innerHTML = '';
@@ -52,7 +53,7 @@ export class Country {
         this.element.innerHTML = '';
         this.info.innerHTML = '';
     }
-    setActive(e: HTMLElement | null) {
+    setActive(e: HTMLElement | null): void {
         if (e && this.active) {
             this.active.classList.toggle('active', undefined);
         }
@@ -61,18 +62,18 @@ export class Country {
         }
         this.active = e;
     }
-    navigateByIndex(index: string) {
+    navigateByIndex(index: string): void {
         this.setActive(document.getElementById(index));
     }
-    handleEvent(e: Event) {
+    handleEvent(e: Event): void {
         if (e.type === 'click') {
-            this.onclick(e.target as HTMLElement);
+            this.onClick(e.target as HTMLElement);
         }
     }
-    onclick(e: HTMLElement) {
+    onClick(e: HTMLElement): void {
         if (e.tagName === 'path') {
             this.setActive(e);
-            const meta: Meta = this.meta ? this.meta[Number.parseInt(e.id)] : null;
+            const meta: Meta | null = this.meta ? this.meta[Number.parseInt(e.id)] : null;
             if (meta) {
                 this.renderInfo(meta);
             }

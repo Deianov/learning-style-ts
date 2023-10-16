@@ -37,7 +37,7 @@ export class Quiz {
         this.validator = validator;
 
         // top
-        let resultsElement = this.renderResult(this.parent, QUIZ_RESULTS_CLASSNAME, QUIZ_CARD_CLASSNAME)?.firstChild?.lastChild;
+        const resultsElement = this.renderResult(this.parent, QUIZ_RESULTS_CLASSNAME, QUIZ_CARD_CLASSNAME)?.firstChild?.lastChild;
         if (resultsElement instanceof HTMLElement) {
             resultsElement.addEventListener('click', validator);
             resultsElement.textContent = MSG_BNT.view;

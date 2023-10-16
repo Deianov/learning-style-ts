@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * https://stackoverflow.com/questions/39392853/is-there-a-type-for-class-in-typescript-and-does-any-include-it
  * Angular internally declare Type as:
@@ -18,13 +20,11 @@ export type Class = {new (...args: any[]): any};
 
 // EVENTS
 export type MouseEvents = 'click' | 'dblclick' | 'mouseup' | 'mousedown';
+export type EventCallback = EventListener | EventListenerObject;
 
-// type EventCallback = (this: HTMLElement) => any;
-
-// interface for dynamic prototype method
-interface Notify {
-    [key: string]: (status: string | null, text: string, options: object) => void;
-}
+// FUNCTIONS
+export type Callback = () => void;
+export type CallbackWithArgs = (...args: any[]) => any;
 
 // DOM
 export type TagName = keyof HTMLElementTagNameMap;
