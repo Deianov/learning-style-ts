@@ -2,11 +2,8 @@ import {data, page, router} from '../../main.js';
 import {factory, PATH_SERVICES} from '../factory.js';
 import {ExerciseModel} from '../types/models.js';
 
-export interface ExercisePlay {
+export interface Renderable {
     render(jsonFile: ExerciseModel): Promise<void>;
-    start(): void;
-    stop(): void;
-    reset(): void;
 }
 
 const SERVICE_FILES_BY_ID = ['', 'flashcards.js', 'quizzes.js', 'maps.js'];
@@ -20,7 +17,7 @@ export abstract class ExerciseService {
         const fileName: string = SERVICE_FILES_BY_ID[router.index || 1];
 
         // dynamic import
-        const ctor = await factory.importClass<ExercisePlay>(PATH_SERVICES, fileName);
+        const ctor = await factory.importClass<Renderable>(PATH_SERVICES, fileName);
         const instance = await factory.getInstance(ctor);
 
         const resource = router.route.path + '/' + id;

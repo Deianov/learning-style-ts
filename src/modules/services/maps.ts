@@ -1,15 +1,14 @@
-import { Country, CountryResource } from '../components/exercises/country.js';
-import { DOM_CONTENT_ID } from '../constants.js';
-import { factory, PATH_RESOURCES_MAPS } from '../factory.js';
-import { ExerciseModel, PropsCountryModel } from '../types/models.js';
+import {Country, CountryResource} from '../components/exercises/country.js';
+import {DOM_CONTENT_ID} from '../constants.js';
+import {factory, PATH_RESOURCES_MAPS} from '../factory.js';
+import {ExerciseModel, PropsCountryModel} from '../types/models.js';
 import dom from '../utils/dom.js';
-import { ExercisePlay } from './exercise.js';
+import {Renderable} from './exercise.js';
 
-class Maps implements ExercisePlay {
+class Maps implements Renderable {
     private parent: HTMLElement;
 
     constructor(parent: string = DOM_CONTENT_ID) {
-        // todo: !
         this.parent = dom.get(parent)!;
     }
 
@@ -36,8 +35,6 @@ class Maps implements ExercisePlay {
             map.meta = fullResource['lands'].meta;
         }
     }
-    start(): void {}
-    stop(): void {}
     reset() {
         this.parent.innerHTML = '';
     }

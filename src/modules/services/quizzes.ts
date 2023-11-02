@@ -4,9 +4,9 @@ import {APP_IS_STATIC, DOM_CONTENT_ID, MSG_QUIZ_NOT_FOUND_ANSWERS, MSG_QUIZ_SERV
 import {factory} from '../factory.js';
 import {ExerciseQuizModel, PropsQuizModel} from '../types/models.js';
 import dom from '../utils/dom.js';
-import {ExercisePlay} from './exercise.js';
+import {Renderable} from './exercise.js';
 
-export default class Quizzes implements ExercisePlay {
+export default class Quizzes implements Renderable {
     private static json: ExerciseQuizModel;
     private static quiz: Promise<Quiz>;
 
@@ -23,16 +23,6 @@ export default class Quizzes implements ExercisePlay {
         (await Quizzes.quiz).render(jsonFile, Quizzes.validate);
     }
 
-    start(): void {
-        throw new Error('Method not implemented.');
-    }
-    stop(): void {
-        throw new Error('Method not implemented.');
-    }
-    reset(): void {
-        throw new Error('Method not implemented.');
-    }
-
     static async validate() {
         const quiz = await Quizzes.quiz;
 
@@ -44,6 +34,7 @@ export default class Quizzes implements ExercisePlay {
         const correct = Quizzes.json?.correct;
         const props: PropsQuizModel = Quizzes.json.props as PropsQuizModel;
         const certification: boolean = props.certification === '1';
+
         // server validation
         if ((!correct || certification) && !APP_IS_STATIC) {
             // todo: with server

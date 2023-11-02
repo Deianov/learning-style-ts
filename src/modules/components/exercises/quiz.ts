@@ -73,9 +73,6 @@ export class Quiz {
         dom.element('input', label, {name: `question${questionNumber}`, type: 'checkbox', value});
         dom.text('span', label, answer.text);
     }
-    stop() {
-        // required from exercise.js
-    }
     reset() {
         this.parent.innerHTML = '';
         this.render(this.json, this.validator!);
