@@ -6,30 +6,47 @@ import {localRepository} from './web.js';
  *  cashing in memory
  */
 const inMemoryRepository = (function () {
-    const files: {[key: string]: Cashable} = {};
+    const cashed: {[key: string]: Cashable} = {};
     return {
         existsByName(name: string): boolean {
             // return files.hasOwnProperty(name);
-            return Object.prototype.hasOwnProperty.call(files, 'bar');
+            return Object.prototype.hasOwnProperty.call(cashed, name);
         },
-        getByName(name: string): Cashable {
-            return files[name];
+        getByName(name: string): Cashable | undefined {
+            return cashed[name];
         },
         save(name: string, obj: Cashable): Cashable {
             // todo:
             // console.log(JSON.stringify(files));
-            files[name] = obj;
-            return this.getByName(name);
+            cashed[name] = obj;
+            return this.getByName(name)!;
         },
         remove(name: string): void {
             if (this.existsByName(name)) {
-                delete files[name];
+                delete cashed[name];
             }
         },
         reset(): void {
-            for (const key of Object.keys(files)) {
-                delete files[key];
+            for (const key of Object.keys(cashed)) {
+                delete cashed[key];
             }
+        },
+    };
+})();
+
+/**
+ *  top level of cashing
+ */
+const cashingRepository = (function () {
+    return {
+        getByName(name: string): Cashable | undefined {
+            return inMemoryRepository.getByName(name);
+        },
+        save(name: string, obj: Cashable): Cashable {
+            return inMemoryRepository.save(name, obj);
+        },
+        reset(): void {
+            inMemoryRepository.reset();
         },
     };
 })();
@@ -68,6 +85,9 @@ const repository = (function () {
     };
 })();
 
+/**
+ *  top level of repositories: exposed in services
+ */
 class Data {
     /**
      * @param {string} name Relative resource path. ("fileName" || path/filename)
@@ -77,7 +97,7 @@ class Data {
     async getJson(name: string, cashable?: boolean, adaptable?: boolean): Promise<Cashable | null> {
         let res;
         if (cashable) {
-            res = this.getCashable(name);
+            res = cashingRepository.getByName(name);
             if (res) {
                 return res;
             }
@@ -87,26 +107,17 @@ class Data {
             return null;
         }
         if (adaptable) {
-            // res = this.adapt(res);
+            // res = dataAdapter(res);
             return null;
         }
         if (cashable) {
-            res = inMemoryRepository.save(name, res);
+            res = cashingRepository.save(name, res);
         }
         return res;
     }
-    private getCashable(name: string) {
-        if (inMemoryRepository.existsByName(name)) {
-            // console.debug("cashed: " + name + ".json")
-            return inMemoryRepository.getByName(name);
-        }
-    }
     removeCached(): void {
-        inMemoryRepository.reset();
+        cashingRepository.reset();
     }
-    // private adapt(json: string) {
-    //     return dataAdapter(json);
-    // }
 }
 
 function arrayToMultidimensional(arr: string[], cols: number): string[][] {
