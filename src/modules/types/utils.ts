@@ -24,6 +24,9 @@ export type EventCallback = EventListener | EventListenerObject;
 
 // FUNCTIONS
 export type Callback = () => void;
+export type CallbackPromise = () => Promise<void>;
+export type CallbackPromiseArgBoolean = (flag?: boolean) => Promise<void>;
+export type CallbackRenderContent = (parent: HTMLElement) => Promise<void>;
 export type CallbackWithArgs = (...args: any[]) => any;
 
 // DOM

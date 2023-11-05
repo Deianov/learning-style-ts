@@ -1,6 +1,6 @@
 export type Link = {
     href?: string;
-    key?: number;
+    value?: number;
     textContent: string;
 };
 

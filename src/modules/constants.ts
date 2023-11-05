@@ -18,6 +18,7 @@ export const APP_LANG = 'en';
 export const APP_KEYBOARD = IS_MOBILE ? 1 : 0;
 
 // CONSTANTS: DEVELOPMENT STATE
+export const USER: {username?: string; pass?: string} = {};
 export let INFO_STRING = `state: ${production ? 'production' : 'development'}, version: ${APP_VERSION} (${
     APP_IS_STATIC ? 'static' : 'api'
 }), `;
@@ -99,6 +100,8 @@ export const DOM_BREADCRUMB_CLASSNAME = 'breadcrumb';
 export const DOM_BREADCRUMB_TAGNAME: TagName = 'ul';
 export const DOM_SUBJECT_CLASSNAME = 'subject';
 export const DOM_NOTIFY_CLASSNAME = 'notify-box';
+
+export const CLASSNAME_FOCUS = 'focus';
 
 // CONSTANTS ASSETS
 export const ASSETS_LOADER_PUFF = `<img src="./assets/images/loaders/puff.svg" alt="loader" width="60" height="60"></img>`;

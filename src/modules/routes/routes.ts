@@ -1,6 +1,6 @@
 import {navigation, page, router, topics} from '../../main.js';
 import {APP_TITLE, DEBUG_CONTENT} from '../constants.js';
-import {Callback} from '../types/utils.js';
+import {Callback, CallbackPromiseArgBoolean} from '../types/utils.js';
 
 export interface Route {
     path: string;
@@ -8,7 +8,7 @@ export interface Route {
     title: string;
     subject: string;
     init?: Callback;
-    render?: Callback;
+    render?: CallbackPromiseArgBoolean;
 }
 
 export enum Pages {
@@ -28,7 +28,7 @@ const routes: Route[] = [
         name: 'cards',
         title: 'Cards',
         subject: 'Cards',
-        init: () => (router.index = 1),
+        init: () => console.log('routes.cards.init()'),
         render: defaultRender,
     },
     {
@@ -36,7 +36,6 @@ const routes: Route[] = [
         name: 'quizzes',
         title: 'Quiz',
         subject: 'Quiz',
-        init: () => (router.index = 2),
         render: defaultRender,
     },
     {
@@ -44,34 +43,40 @@ const routes: Route[] = [
         name: 'maps',
         title: 'Maps',
         subject: 'Maps',
-        init: () => (router.index = 3),
         render: defaultRender,
     },
     {path: '/login', name: 'login', title: 'Login', subject: 'Login'},
     {path: '/register', name: 'register', title: 'Register', subject: 'Register'},
 ];
 
-async function home() {
-    router.index = Pages.home;
+/**
+ * @param {boolean} flag - skip rendering of content
+ */
+async function home(flag?: boolean) {
+    // router.setPage(Pages.home);
     document.title = routes[Pages.home].title;
-    navigation.top.navigateByIndex(1);
-    page.blank();
-    await page.renderContent(debugContent);
+    navigation.top.navigateByIndex(Pages.cards);
+    page.blankPage(routes[Pages.home].subject);
+    await page.renderContent(debugContent, flag);
     await topics.render(routes[Pages.cards].name);
 }
 
-async function defaultRender() {
-    document.title = routes[router.index].title;
-    navigation.top.navigateByIndex(router.index);
-    page.blank();
-    await page.renderContent(debugContent);
-    await topics.render(routes[router.index].name);
+/**
+ * @param {boolean} flag - skip rendering of content
+ */
+async function defaultRender(flag?: boolean) {
+    const route = routes[router.page];
+    document.title = route.title;
+    navigation.top.navigateByIndex(router.page);
+    page.blankPage(route.subject);
+    await page.renderContent(debugContent, flag);
+    await topics.render(route.name);
 
     // todo: development
     // notify.btn('error', 'toDo', func);
 }
 
-function debugContent(parent: HTMLElement) {
+export async function debugContent(parent: HTMLElement) {
     parent.innerHTML = DEBUG_CONTENT;
 }
 

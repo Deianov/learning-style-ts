@@ -23,7 +23,7 @@ export const subject = (function () {
  * @param {string} subject  - name
  * @param {ExerciseInfoModel | undefined} obj    - {.... source, sourceUrl, author, authorUrl}
  */
-function renderSubject(parent: HTMLElement, subject: string, obj: ExerciseInfoModel | undefined): void {
+function renderSubject(parent: HTMLElement, subject: string, obj?: ExerciseInfoModel): void {
     const data: SubjectElements[] = [];
     parent.innerHTML = '';
     if (subject) {
@@ -76,6 +76,8 @@ function splitSubjectElements(arr: SubjectElements): SubjectElements[] {
         }
         result.push(elements as SubjectElements);
     }
+    console.log(result);
+
     return result;
 }
 

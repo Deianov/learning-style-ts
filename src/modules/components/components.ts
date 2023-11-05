@@ -149,7 +149,7 @@ class Component extends MyEvent {
 
     <ul class="breadcrumb">
         <li><a href="./">Home</a></li>
-        <li><a key="1" href="javascript:void(0)">Cards</a></li>
+        <li><a value="1" href="javascript:void(0)">Cards</a></li>
         <li><a href="#">German</a></li>
     </ul>
 */

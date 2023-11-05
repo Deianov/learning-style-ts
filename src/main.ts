@@ -6,7 +6,6 @@ import {Data} from './modules/data.js';
 import {factory} from './modules/factory.js';
 import {Page} from './modules/routes/page.js';
 import {Router} from './modules/routes/router.js';
-import {renderEvent} from './modules/services/exercise.js';
 
 // init modules
 const modules = (async () => {
@@ -23,13 +22,13 @@ const modules = (async () => {
     };
 
     // init classes
-    factory.addProps('Breadcrumb', {eventType: 'click', event: Router.navigateEvent});
+    factory.addProps('Breadcrumb', {eventType: 'click', event: Router.renderPageEvent});
 
     // instances
     const breadcrumb = await factory.getInstance(Breadcrumb);
 
     // events
-    Page.elements['topics'].addEventListener('click', renderEvent);
+    Page.elements['topics'].addEventListener('click', Router.renderExerciseEvent);
 
     return {data, router, page, topics, breadcrumb, notify, navigation};
 })();

@@ -1,7 +1,7 @@
 import {data} from '../../main.js';
-import {APP_IS_STATIC, APP_LANG, ASSETS_LOADER_PUFF, DOM_TOPICS_PARENT_TAGNAME} from '../constants.js';
+import {APP_IS_STATIC, APP_LANG, ASSETS_LOADER_PUFF, CLASSNAME_FOCUS, DOM_TOPICS_PARENT_TAGNAME} from '../constants.js';
 import {RouteName} from '../routes/routes.js';
-import {Category, Link} from '../types/models.js';
+import {Category} from '../types/models.js';
 import dom from '../utils/dom.js';
 
 class Topics {
@@ -32,15 +32,26 @@ class Topics {
             Topics.lastPage = page;
         }
     }
-    renderTopic(parent: HTMLElement, category: Category) {
+    renderTopic(parent: HTMLElement, category: Category): void {
         const ul = dom.element('ul', parent);
         // todo: api?
         const api = ''; // category.api || ''
         dom.text('h3', ul, category.category);
-        category.links.forEach((link: Link) => this.renderLink(ul, `${api}${link.id}`, link.text));
+        for (const link of category.links) {
+            this.renderLink(ul, `${api}${link.id}`, link.text);
+        }
     }
-    renderLink(parent: HTMLElement, value: string, label: string) {
+    renderLink(parent: HTMLElement, value: string, label: string): void {
         dom.text('a', dom.element('li', parent), label, {href: 'javascript:void(0)', value});
+    }
+    /**
+     * @param {string | number | undefined} value  - exercise id
+     */
+    focusLink(value?: string | number): void {
+        const v: string | undefined = typeof value === 'number' ? value.toString() : value;
+        for (const a of document.querySelectorAll('aside a')) {
+            a.classList.toggle(CLASSNAME_FOCUS, a.getAttribute('value') === v);
+        }
     }
 }
 

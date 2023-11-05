@@ -1,8 +1,8 @@
-import {breadcrumb, notify, router} from '../../main.js';
+import {breadcrumb, notify, router, topics} from '../../main.js';
 import {subject} from '../components/subject.js';
 import * as C from '../constants.js';
 import {ExerciseInfoModel} from '../types/models.js';
-import {CallbackWithArgs} from '../types/utils.js';
+import {CallbackRenderContent} from '../types/utils.js';
 import dom from '../utils/dom.js';
 
 export class Page {
@@ -10,7 +10,6 @@ export class Page {
     private active: boolean = false;
     constructor() {
         Page.init();
-        // this.elements = Page.elements;
     }
     static init() {
         // toDo: way to skip ! ?
@@ -19,7 +18,6 @@ export class Page {
         this.elements['topics'] = document.getElementsByTagName(C.DOM_TOPICS_PARENT_TAGNAME)[0];
         this.elements['article'] = document.getElementsByTagName(C.DOM_ARTICLE_TAGNAME)[0];
         this.elements['header'] = document.getElementById(C.DOM_HEADER_ID)!;
-        // todo: error in register
         this.elements['control'] = document.getElementById(C.DOM_CONTROL_ID)!;
         this.elements['content'] = document.getElementById(C.DOM_CONTENT_ID)!;
         this.elements['messages'] = document.getElementById(C.DOM_MESSAGES_ID)!;
@@ -48,12 +46,20 @@ export class Page {
         this.elements['messages'].innerHTML = '';
         this.elements['bottom'].innerHTML = '';
     }
-    blank(obj?: ExerciseInfoModel): void {
-        const {name, category} = obj || {};
+    blankPage(name: string): void {
         Page.reset();
         breadcrumb.render(router.getLinks());
+        subject.renderSubject(Page.elements['subject'], name);
+        topics.focusLink();
+    }
+    blankExercise(obj: ExerciseInfoModel): void {
+        Page.reset();
+        const {id, name, category} = obj;
+
+        breadcrumb.render(router.getLinks());
         breadcrumb.addTopic(category);
-        subject.renderSubject(Page.elements['subject'], name || router.route.subject, obj);
+        subject.renderSubject(Page.elements['subject'], name, obj);
+        topics.focusLink(id);
     }
     play(flag: boolean) {
         notify.clear();
@@ -66,8 +72,10 @@ export class Page {
         }
         this.active = flag;
     }
-    async renderContent(callback: CallbackWithArgs, args?: object) {
-        await callback(Page.elements['content'], args);
+    async renderContent(callback: CallbackRenderContent, skip?: boolean) {
+        if (!skip) {
+            callback(Page.elements['content']);
+        }
     }
     // async renderContent(callback: (...args: any[]) => any, args?: object) {
     //     await callback(Page.elements['content'], args);
