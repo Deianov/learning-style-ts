@@ -1,11 +1,14 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 const objects = {
-    isObject(obj: object) {
+    isObject(obj: any) {
         return obj && typeof obj === 'object' && !Array.isArray(obj);
     },
-    isArray(obj: object) {
+    isArray(obj: any) {
         return obj && Array.isArray(obj);
+    },
+    isError(obj: any): obj is Error {
+        return obj instanceof Error;
     },
     assign: object_assign,
 };
