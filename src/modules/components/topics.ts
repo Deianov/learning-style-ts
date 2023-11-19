@@ -43,7 +43,6 @@ class Topics {
         const ul = dom.element('ul', parent);
         dom.text('h3', ul, category.category);
         for (const link of category.links) {
-            // const href = `/?page=${pageIndex}&id=${link.id}`;
             const href = url.toQuery(pageIndex, link.id.toString());
             this.renderLink(ul, href, link.text);
         }
