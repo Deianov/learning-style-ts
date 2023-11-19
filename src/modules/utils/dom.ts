@@ -11,6 +11,30 @@ const dom = {
     get(v: string | HTMLElement): HTMLElement | null {
         return typeof v === 'string' ? document.getElementById(v) : document.body.contains(v) ? v : null;
     },
+    getById(s: string): HTMLElement {
+        const e = document.getElementById(s);
+        if (e) {
+            return e;
+        }
+        const msg = 'Not found dom element with id: ' + s;
+        throw new Error(msg);
+    },
+    getByTagName(s: string): HTMLElement {
+        const e = document.getElementsByTagName(s);
+        if (e) {
+            return e[0] as HTMLElement;
+        }
+        const msg = 'Not found dom element with TagName: ' + s;
+        throw new Error(msg);
+    },
+    getByClassName(s: string): HTMLElement {
+        const e = document.getElementsByClassName(s);
+        if (e) {
+            return e[0] as HTMLElement;
+        }
+        const msg = 'Not found dom element with ClassName: ' + s;
+        throw new Error(msg);
+    },
     /**
      * @param {HTMLElement} e       - element
      * @param {Opt} opt             - className or object with options (key, value).
