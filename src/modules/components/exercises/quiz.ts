@@ -1,4 +1,4 @@
-import {MSG_BNT, QUIZ_CORRECT_QUESTION_SVG} from '../../constants.js';
+import {DEBUG_CONTENT, MSG_BNT, QUIZ_CORRECT_QUESTION_SVG} from '../../constants.js';
 import {AnswerModel, ExerciseQuizModel, QuestionModel} from '../../types/models.js';
 import dom from '../../utils/dom.js';
 import {Flags} from '../../utils/flags.js';
@@ -31,16 +31,20 @@ export class Quiz {
         if (!jsonFile) {
             return;
         }
+
         this.json = jsonFile;
         this.questions = jsonFile.questions;
         this.isValidated = false;
         this.validator = validator;
 
+        // kiwi
+        this.parent.innerHTML = DEBUG_CONTENT;
+
         // top
         const resultsElement = this.renderResult(this.parent, QUIZ_RESULTS_CLASSNAME, QUIZ_CARD_CLASSNAME)?.firstChild?.lastChild;
         if (resultsElement instanceof HTMLElement) {
-            resultsElement.addEventListener('click', validator);
             resultsElement.textContent = MSG_BNT.view;
+            resultsElement.addEventListener('click', validator);
         }
 
         // table
@@ -57,7 +61,8 @@ export class Quiz {
         const element = dom.element('div', parent, className);
         const card = dom.element('div', element, classNameCard);
         dom.element('span', card);
-        dom.element('a', card, {href: '#'});
+        dom.element('div', card, {style: 'cursor: pointer;'});
+
         return element;
     }
     renderQuestion(parent: HTMLElement, question: QuestionModel, questionNumber: number): void {
@@ -74,7 +79,6 @@ export class Quiz {
         dom.text('span', label, answer.text);
     }
     reset() {
-        this.parent.innerHTML = '';
         this.render(this.json, this.validator!);
     }
     validate(correct: number[]): Result {
@@ -100,6 +104,7 @@ export class Quiz {
         }
 
         this.isValidated = true;
+
         return {correct: correctByUser, from};
     }
     validateQuestions(correct: number[]): boolean[] {
