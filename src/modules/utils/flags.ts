@@ -18,9 +18,9 @@ abstract class Flags {
         return (flags & bitmask) === 0;
     }
     /**
-     * Index to bitmask: 0, 1, 2, 3 ... 30  =>  1, 2, 4, 8, ... 1073741824
+     * Index to bitmask: 0, 1, 2, 3 ... 32  =>  1, 2, 4, 8, ...
      *
-     * @param {number} index (max: ~30)
+     * @param {number} index (max: 31)
      * @returns {number} bits
      */
     static toBits(index: number): number {
