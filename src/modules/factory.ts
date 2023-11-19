@@ -1,6 +1,6 @@
 import {EventCallback, MouseEvents, Type, TypeWithArgs} from './types/utils.js';
 
-// CONSTANTS: MODULES - relative paths to factory
+/** CONSTANTS: MODULES - relative paths to factory */
 export const PATH_SERVICES: string = './services/';
 export const PATH_RESOURCES_MAPS: string = './components/maps/';
 
@@ -66,7 +66,15 @@ export const factory = (function () {
         if (typeof module.default === 'function') {
             return module.default as new () => T;
         } else {
-            throw new Error(`Module does not export a default class constructor.`);
+            throw new Error('Module does not export a default class constructor.');
+        }
+    }
+    async function importClassWithArgs<T, A>(path: string, file: string): Promise<new (...args: A[]) => T> {
+        const module = await import(path + encodeURIComponent(file));
+        if (typeof module.default === 'function') {
+            return module.default as new (...args: A[]) => T;
+        } else {
+            throw new Error('Module does not export a default class constructor.');
         }
     }
 
@@ -81,6 +89,7 @@ export const factory = (function () {
         getInstance,
         getInstanceWithArgs,
         importClass,
+        importClassWithArgs,
         importResource,
     };
 })();
