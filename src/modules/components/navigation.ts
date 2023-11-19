@@ -1,4 +1,5 @@
 import {router} from '../../main.js';
+import {url} from '../utils/web.js';
 
 export class Menu {
     private element: Element;
@@ -18,7 +19,7 @@ export class Menu {
         this.active = flag ? e : null;
     }
     navigateByIndex(index: number) {
-        const href = router.toPath(index, null);
+        const href = url.toQuery(index, null);
         const e = this.element.querySelector(`a[href = "${href}"]`);
         if (e) {
             this.click(e);

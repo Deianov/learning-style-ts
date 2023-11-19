@@ -38,4 +38,8 @@ export const url = {
         }
         return result;
     },
+    toQuery(pageIndex: number | string, id: string | null): string {
+        const path = '/?page=' + pageIndex + (id ? '&id=' + id : '');
+        return path;
+    },
 };

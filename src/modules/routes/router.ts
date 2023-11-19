@@ -51,7 +51,7 @@ abstract class State {
     }
     static push(title?: string): void {
         if (State.isNewState) {
-            const query = Router.instance.toPath(State.saved.page || 0, State.saved.id || null);
+            const query = url.toQuery(State.saved.page || 0, State.saved.id || null);
             window.history.pushState(Object.assign({}, State.saved), title || '', query);
             State.isNewState = false;
         }
@@ -98,15 +98,11 @@ class Router implements RouterInterface {
         }
         return Object.keys(result).length === 0 ? undefined : result;
     }
-    toPath(pageIndex: number | string, id: string | null): string {
-        const path = '/?page=' + pageIndex + (id ? '&id=' + id : '');
-        return path;
-    }
     getLinks(): Links {
         const links: Links = [];
         if (this.page > 0) {
-            links.push({href: this.toPath(0, null), textContent: this.routes[0].subject});
-            links.push({href: this.toPath(this.page, null), textContent: this.route.subject});
+            links.push({href: url.toQuery(0, null), textContent: this.routes[0].subject});
+            links.push({href: url.toQuery(this.page, null), textContent: this.route.subject});
         }
         return links;
     }
