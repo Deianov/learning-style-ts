@@ -1,15 +1,13 @@
 import {Country, CountryResource} from '../components/exercises/country.js';
-import {DOM_CONTENT_ID} from '../constants.js';
 import {factory, PATH_RESOURCES_MAPS} from '../factory.js';
 import {ExerciseModel, PropsCountryModel} from '../types/models.js';
-import dom from '../utils/dom.js';
 import {Renderable} from './exercise.js';
 
 class Maps implements Renderable {
     private parent: HTMLElement;
 
-    constructor(parent: string = DOM_CONTENT_ID) {
-        this.parent = dom.get(parent)!;
+    constructor(parent: HTMLElement) {
+        this.parent = parent;
     }
 
     async render(jsonFile: ExerciseModel): Promise<void> {

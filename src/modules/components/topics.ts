@@ -1,56 +1,60 @@
 import {data} from '../../main.js';
 import {APP_IS_STATIC, APP_LANG, ASSETS_LOADER_PUFF, CLASSNAME_FOCUS, DOM_TOPICS_PARENT_TAGNAME} from '../constants.js';
-import {RouteName} from '../routes/routes.js';
-import {Category} from '../types/models.js';
+import {Pages} from '../routes/routes.js';
+import {Cashable, Category} from '../types/models.js';
 import dom from '../utils/dom.js';
+import {url} from '../utils/web.js';
 
 class Topics {
     private element: HTMLElement;
-    private static lastPage: RouteName;
+    private static lastPage: Pages;
     constructor() {
         this.element = document.getElementsByTagName(DOM_TOPICS_PARENT_TAGNAME)[0];
     }
-    async render(page: RouteName): Promise<void> {
-        // skip reloads
-        if (Topics.lastPage === page) {
+    async render(pageIndex: Pages): Promise<void> {
+        if (Topics.lastPage === pageIndex) {
+            this.focusLinkById();
             return;
         }
 
         this.element.innerHTML = `<ul>${ASSETS_LOADER_PUFF}</ul>`;
 
-        const path = page;
+        const path: string = Pages[pageIndex];
         const query = APP_IS_STATIC ? '' : `?lang=${APP_LANG}`;
 
         try {
-            const categories = (await data.getJson(`${path}${query}`, true, false)) as Category[];
+            const req: Cashable | null = await data.getJson(`${path}${query}`, true, false);
+
+            if (req === null) {
+                return;
+            }
+
+            const categories: Category[] = req as Category[];
             this.element.innerHTML = '';
 
             for (const category of categories) {
-                this.renderTopic(this.element, category);
+                this.renderTopic(this.element, pageIndex, category);
             }
         } finally {
-            Topics.lastPage = page;
+            Topics.lastPage = pageIndex;
         }
     }
-    renderTopic(parent: HTMLElement, category: Category): void {
+    renderTopic(parent: HTMLElement, pageIndex: number, category: Category): void {
         const ul = dom.element('ul', parent);
-        // todo: api?
-        const api = ''; // category.api || ''
         dom.text('h3', ul, category.category);
         for (const link of category.links) {
-            this.renderLink(ul, `${api}${link.id}`, link.text);
+            const href = `/?page=${pageIndex}&id=${link.id}`;
+            this.renderLink(ul, href, link.text);
         }
     }
-    renderLink(parent: HTMLElement, value: string, label: string): void {
-        dom.text('a', dom.element('li', parent), label, {href: 'javascript:void(0)', value});
+    renderLink(parent: HTMLElement, href: string, label: string): void {
+        dom.text('a', dom.element('li', parent), label, {href});
     }
-    /**
-     * @param {string | number | undefined} value  - exercise id
-     */
-    focusLink(value?: string | number): void {
-        const v: string | undefined = typeof value === 'number' ? value.toString() : value;
+    focusLinkById(id?: string | number): void {
+        const v: string | undefined = typeof id === 'number' ? id.toString() : id;
         for (const a of document.querySelectorAll('aside a')) {
-            a.classList.toggle(CLASSNAME_FOCUS, a.getAttribute('value') === v);
+            const params = url.parseUrlSearchParams(a.getAttribute('href') || '');
+            a.classList.toggle(CLASSNAME_FOCUS, params['id'] === v);
         }
     }
 }

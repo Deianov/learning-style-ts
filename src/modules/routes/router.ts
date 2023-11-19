@@ -1,20 +1,11 @@
+import {navigation} from '../../main.js';
 import {USER} from '../constants.js';
 import {ExerciseService} from '../services/exercise.js';
 import {Links} from '../types/components.js';
-import routes, {Pages, Route} from './routes.js';
-
-type UrlSearchParams = {
-    page?: string | null;
-    id?: string | null;
-    username?: string | null;
-};
-
-type State = {
-    page?: number;
-    id?: string;
-};
-
-type Page = string | number | null | undefined | false;
+import {strings} from '../utils/strings.js';
+import {url} from '../utils/web.js';
+import {Page} from './page.js';
+import {Pages, Route, RouterInterface, routes} from './routes.js';
 
 /*
 if (location.protocol !== "https:"){
@@ -22,165 +13,160 @@ if (location.protocol !== "https:"){
 }
 */
 
-class Router {
+enum URL_SEARCH_PARAMS {
+    page = 'page',
+    id = 'id',
+    username = 'username',
+}
+type SearchParams = {
+    [key in URL_SEARCH_PARAMS]?: string | null;
+};
+type PageIndex = string | number | null;
+
+abstract class State {
+    // undefined -> null (first state)
+    private static saved: {page?: number; id?: string | null} = {};
+    private static isNewState: boolean = false;
+
+    // read-only
+    static page: number = 0;
+    static id: string | null = null;
+    static isNewPage: boolean = false;
+    static isNewId: boolean = false;
+    static isBlank: boolean = false;
+
+    private constructor() {}
+
+    static save(page: number, id: string | null): void {
+        const newPage = State.getPage(page);
+        const newId = State.getId(id);
+        State.isNewPage = State.saved.page !== newPage;
+        State.isNewId = State.saved.id !== newId;
+        // from id to page || first loading of page -> undefined to null
+        State.isBlank = State.isNewId && newId === null;
+        State.page = newPage;
+        State.id = newId;
+        State.saved = {page: newPage, id: newId};
+        State.isNewState = State.isNewPage || State.isNewId;
+    }
+    static push(title?: string): void {
+        if (State.isNewState) {
+            const query = Router.instance.toPath(State.saved.page || 0, State.saved.id || null);
+            window.history.pushState(Object.assign({}, State.saved), title || '', query);
+            State.isNewState = false;
+        }
+    }
+    private static getPage(n: number): number {
+        return Number.isInteger(n) && n > 0 ? n : 0;
+    }
+    private static getId(s: string | null | undefined): string | null {
+        return s && strings.isValid(s) ? strings.clear(s) : null;
+    }
+}
+
+class Router implements RouterInterface {
     static instance: Router;
     page: Pages;
     routes: Route[];
     route: Route;
-    private state: State;
     constructor() {
         Router.instance = this;
         this.page = Pages.home;
         this.routes = routes;
-        this.state = {page: -1};
         this.route = this.routes[this.page];
     }
-    /**
-     * @param {number | string} value  - page index
-     * @returns
-     */
+    static isValid(index: number): boolean {
+        return Number.isInteger(index) && index > -1 && index < routes.length;
+    }
+    static getIndex(value: number | string): Pages {
+        const index = typeof value === 'string' ? parseInt(value) : value;
+        return Router.isValid(index) ? index : Pages.home;
+    }
     setPage(value: number | string): Pages {
         this.page = Router.getIndex(value);
         this.route = this.routes[this.page];
         return this.page;
     }
+    urlSearchParams(urlString?: string): SearchParams | undefined {
+        const params = typeof urlString === 'string' ? url.parseUrlSearchParams(urlString) : url.getLocationSearchParams();
+        const result: SearchParams = {};
+
+        for (const key of Object.values(URL_SEARCH_PARAMS)) {
+            if (Object.prototype.hasOwnProperty.call(params, key)) {
+                result[key] = params[key] || null;
+            }
+        }
+        return Object.keys(result).length === 0 ? undefined : result;
+    }
+    toPath(pageIndex: number | string, id: string | null): string {
+        const path = '/?page=' + pageIndex + (id ? '&id=' + id : '');
+        return path;
+    }
     getLinks(): Links {
         const links: Links = [];
         if (this.page > 0) {
-            links.push({href: './', textContent: this.routes[Pages.home].subject});
-            links.push({value: this.page, textContent: this.route.subject});
+            links.push({href: this.toPath(0, null), textContent: this.routes[0].subject});
+            links.push({href: this.toPath(this.page, null), textContent: this.route.subject});
         }
         return links;
     }
-    static isValid(i: number): boolean {
-        return Number.isInteger(i) && i > -1 && i < routes.length;
-    }
-    /**
-     * @param {Page} page                               - page index | Falsy
-     * @param {string | undefined} id                   - exercise id
-     * @param {UrlSearchParams | undefined} params      - {page, id, username}
-     * @returns {Promise<void>}
-     */
-    async navigate(page: Page, id?: string | null, params?: UrlSearchParams): Promise<void> {
+    async navigate(page: PageIndex, id: string | null, params?: SearchParams | string): Promise<void> {
+        // relative path | SearchParams
         if (params) {
+            const searchParams: SearchParams = (typeof params === 'string' ? this.urlSearchParams(params) : params) || {};
+
             // todo: fictive login
-            if (params.username) {
-                USER.username = params.username;
+            if (searchParams.username) {
+                USER.username = searchParams.username;
             }
-            await this.navigate(params.page, params.id);
+            await this.navigate(searchParams.page || null, searchParams.id || null);
             return;
         }
 
-        const index: Pages = page ? Router.getIndex(page) : this.page;
-        const isNewPage = index !== this.state.page;
-        const isNewId = isNewPage || id !== this.state.id;
+        let pageIndex: number = typeof page === 'string' || typeof page === 'number' ? Router.getIndex(page) : this.page;
+        // When navigating from home to flashcards, hack the index.
+        pageIndex = id && pageIndex === 0 ? Pages.cards : pageIndex;
 
-        if (isNewPage || isNewId) {
-            this.setPage(index);
-            this.state = {page: this.page, id: id || ''};
-            const query = '?page=' + this.page + (id ? '&id=' + id : '');
-            window.history.pushState(Object.assign({}, this.state), this.route.title || 'EmptyTitle', query);
-            const flags = (isNewPage ? 1 : 0) + (isNewId ? 2 : 0);
-            await Router.update(null, flags);
+        State.save(pageIndex, id);
+        State.push(this.route.title);
+
+        if (State.isNewPage || State.isNewId) {
+            await Router.update();
         }
     }
-    /**
-     * @returns {UrlSearchParams | undefined}
-     */
-    urlSearchParams(): UrlSearchParams | undefined {
-        const params = new URLSearchParams(window.location.search);
-        const res: UrlSearchParams = {};
-        if (params.has('page')) {
-            res.page = params.get('page');
-        }
-        if (params.has('id')) {
-            res.id = params.get('id') || '';
-        }
-        if (params.has('username')) {
-            res.username = params.get('username') || '';
-        }
-        return Object.keys(res).length === 0 ? undefined : res;
-    }
-
-    /**
-     * @param {number | string} value -> page index
-     * @returns {Pages} page index
-     */
-    static getIndex(value: number | string): Pages {
-        const index = typeof value === 'string' ? parseInt(value) : value;
-        return Router.isValid(index) ? index : Pages.home;
-    }
-
-    /**
-     * @param event - window.onpopstate
-     * @param flags - 1: new page, 2: new id
-     */
-    static async update(event: PopStateEvent | null, flags?: number) {
-        // console.log(`update: event: ${event}; eventState: ${event ? JSON.stringify(event.state) : null}; w.path: ${window.location.pathname}; w.search: ${window.location.search}; routerState: ${JSON.stringify(Router.instance.state)}`)
-
-        let isNewPage = undefined;
-        let isNewId = undefined;
+    static async update(event?: PopStateEvent | null) {
         const router = Router.instance;
-        const state = router.state;
 
-        if (event) {
-            if (!event.state) {
-                return;
-            }
+        if (event && event.state) {
             const newIndex = Router.getIndex(event.state.page);
             const newId = event.state.id;
 
-            isNewPage = newIndex !== state.page;
-            isNewId = isNewPage || newId !== state.id;
-
-            if (isNewPage) {
-                router.setPage(newIndex);
-            }
-
-            // update router state
-            state.page = newIndex;
-            state.id = newId;
-
-            // custom update
-        } else if (flags) {
-            isNewPage = (flags & 1) > 0;
-            isNewId = (flags & 2) > 0;
+            State.save(newIndex, newId);
         }
-        // todo: isBlank ???
-        // reset from exercise to exercise home
-        const isBlank = isNewId && !state.id;
+        if (State.isNewPage) {
+            router.setPage(State.page);
+        }
+        const isNewExercise = State.id && State.isNewId;
+
+        // update navigation (skip index 0)
+        navigation.top.navigateByIndex(router.page || 1);
 
         // render page
-        if (isNewPage || isBlank) {
-            if (router.route.init) {
-                router.route.init();
-            }
-            if (router.route.render) {
-                // skip content if has render exercise
-                await router.route.render(isNewPage);
-            }
+        if (State.isNewPage || State.isBlank) {
+            await Page.instance.renderPage(Router.instance, !isNewExercise);
         }
 
         // render exercise
-        if (isNewId && state.id) {
-            await ExerciseService.render(state.id);
+        if (isNewExercise) {
+            await ExerciseService.render(State.id!);
         }
     }
-    /**
-     * Breadcrumb event:  value === page index
-     */
-    static async renderPageEvent(e: Event) {
-        if (e.target instanceof HTMLElement && e.target.hasAttribute('value')) {
-            await Router.instance.navigate(e.target.getAttribute('value'));
-        }
-    }
-    /**
-     *
-     * Topics event: value === exercise id
-     */
-    static async renderExerciseEvent(e: Event) {
-        if (e.target instanceof HTMLElement && e.target.tagName === 'A') {
-            await Router.instance.navigate(null, e.target.getAttribute('value'));
+    /** Breadcrumbs, Topics event: Attribute: href = UrlSearchString = /?page=Number&id=Number */
+    async renderEvent(e: Event): Promise<void> {
+        if (e.target instanceof HTMLElement && e.target.hasAttribute('href')) {
+            e.preventDefault();
+            const href: string = e.target.getAttribute('href') || '';
+            await Router.instance.navigate(null, null, href);
         }
     }
 }

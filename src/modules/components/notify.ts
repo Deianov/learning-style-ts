@@ -1,4 +1,4 @@
-import {Page} from '../routes/page.js';
+import {elements} from '../routes/page.js';
 import {CallbackWithArgs} from '../types/utils.js';
 import dom from '../utils/dom.js';
 import objects from '../utils/objects.js';
@@ -244,21 +244,21 @@ class Notify {
     }
     /** notify.msg();  notify.alert();  notify.title()?;  notify.btn()  */
     static defaultInit() {
-        let parent = Page.elements['article'];
-        let box = Page.elements['messages'];
+        let parent = elements['article'];
+        let box = elements['messages'];
         box.classList.toggle(OPTIONS.box.className, true);
 
         const msg = new Msg('msg', box, Type.msg, Renders.SYMBOL);
         Notify.storage['msg'] = {parent, instance: msg};
 
-        parent = Page.elements['header'].firstChild as HTMLElement;
-        box = Page.elements['notify1'];
+        parent = elements['header'].firstChild as HTMLElement;
+        box = elements['notify1'];
 
         const alert = new Msg('alert', box, Type.alert, Renders.ALERT);
         Notify.storage['alert'] = {parent, instance: alert};
 
         parent = parent.nextSibling as HTMLElement;
-        box = Page.elements['notify2'];
+        box = elements['notify2'];
 
         const btn = new Msg('btn', box, Type.msg, Renders.BUTTON);
         Notify.storage['btn'] = {parent, instance: btn};

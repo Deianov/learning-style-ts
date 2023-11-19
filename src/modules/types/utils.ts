@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { RouterInterface } from '../routes/routes.js';
 
 /**
  * https://stackoverflow.com/questions/39392853/is-there-a-type-for-class-in-typescript-and-does-any-include-it
@@ -26,8 +27,14 @@ export type EventCallback = EventListener | EventListenerObject;
 export type Callback = () => void;
 export type CallbackPromise = () => Promise<void>;
 export type CallbackPromiseArgBoolean = (flag?: boolean) => Promise<void>;
+export type CallbackRenderPage = (router: RouterInterface, content: boolean) => Promise<void>;
 export type CallbackRenderContent = (parent: HTMLElement) => Promise<void>;
 export type CallbackWithArgs = (...args: any[]) => any;
 
 // DOM
 export type TagName = keyof HTMLElementTagNameMap;
+
+// WEB
+export type UrlSearchParams = {
+    [key: string]: string | null;
+};

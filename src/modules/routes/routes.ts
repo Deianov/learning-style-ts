@@ -1,6 +1,6 @@
-import {navigation, page, router, topics} from '../../main.js';
-import {APP_TITLE, DEBUG_CONTENT} from '../constants.js';
-import {Callback, CallbackPromiseArgBoolean} from '../types/utils.js';
+import {APP_TITLE} from '../constants.js';
+import {Links} from '../types/components.js';
+import {Callback} from '../types/utils.js';
 
 export interface Route {
     path: string;
@@ -8,7 +8,7 @@ export interface Route {
     title: string;
     subject: string;
     init?: Callback;
-    render?: CallbackPromiseArgBoolean;
+    render?: RenderIndex;
 }
 
 export enum Pages {
@@ -21,65 +21,45 @@ export enum Pages {
 }
 export type RouteName = keyof typeof Pages;
 
-const routes: Route[] = [
-    {path: '/', name: 'home', title: APP_TITLE, subject: 'Home', render: home},
+export enum RenderIndex {
+    DEFAULT,
+    HOME,
+}
+
+export const routes: Route[] = [
+    {path: '/', name: 'home', title: APP_TITLE, subject: 'Home', render: RenderIndex.HOME},
     {
         path: '/cards',
         name: 'cards',
         title: 'Cards',
         subject: 'Cards',
-        init: () => console.log('routes.cards.init()'),
-        render: defaultRender,
+        // init: () => console.log('routes.cards.init()'),
+        render: RenderIndex.DEFAULT,
     },
     {
         path: '/quizzes',
         name: 'quizzes',
         title: 'Quiz',
         subject: 'Quiz',
-        render: defaultRender,
+        render: RenderIndex.DEFAULT,
     },
     {
         path: '/maps',
         name: 'maps',
         title: 'Maps',
         subject: 'Maps',
-        render: defaultRender,
+        render: RenderIndex.DEFAULT,
     },
     {path: '/login', name: 'login', title: 'Login', subject: 'Login'},
     {path: '/register', name: 'register', title: 'Register', subject: 'Register'},
 ];
 
-/**
- * @param {boolean} flag - skip rendering of content
- */
-async function home(flag?: boolean) {
-    // router.setPage(Pages.home);
-    document.title = routes[Pages.home].title;
-    navigation.top.navigateByIndex(Pages.cards);
-    page.blankPage(routes[Pages.home].subject);
-    await page.renderContent(debugContent, flag);
-    await topics.render(routes[Pages.cards].name);
+// SHARED INTERFACES
+
+export interface RouterInterface {
+    page: Pages;
+    route: Route;
+    setPage(value: number | string): Pages;
+    getLinks(): Links;
+    renderEvent(e: Event): Promise<void>;
 }
-
-/**
- * @param {boolean} flag - skip rendering of content
- */
-async function defaultRender(flag?: boolean) {
-    const route = routes[router.page];
-    document.title = route.title;
-    navigation.top.navigateByIndex(router.page);
-    page.blankPage(route.subject);
-    await page.renderContent(debugContent, flag);
-    await topics.render(route.name);
-
-    // todo: development
-    // notify.btn('error', 'toDo', func);
-}
-
-export async function debugContent(parent: HTMLElement) {
-    parent.innerHTML = DEBUG_CONTENT;
-}
-
-/** export unreferenced copy of the routes */
-// todo: are the objects too ?
-export default routes.slice(0);

@@ -1,17 +1,16 @@
 import {notify} from '../../main.js';
 import {Quiz} from '../components/exercises/quiz.js';
-import {APP_IS_STATIC, DOM_CONTENT_ID, MSG_QUIZ_NOT_FOUND_ANSWERS, MSG_QUIZ_SERVER_REQUIRED} from '../constants.js';
+import {APP_IS_STATIC, MSG_QUIZ_NOT_FOUND_ANSWERS, MSG_QUIZ_SERVER_REQUIRED} from '../constants.js';
 import {factory} from '../factory.js';
 import {ExerciseQuizModel, PropsQuizModel} from '../types/models.js';
-import dom from '../utils/dom.js';
 import {Renderable} from './exercise.js';
 
 export default class Quizzes implements Renderable {
     private static json: ExerciseQuizModel;
     private static quiz: Promise<Quiz>;
 
-    constructor(parent: string = DOM_CONTENT_ID) {
-        Quizzes.quiz = factory.getInstanceWithArgs(Quiz, dom.get(parent)!);
+    constructor(parent: HTMLElement) {
+        Quizzes.quiz = factory.getInstanceWithArgs(Quiz, parent);
     }
 
     async render(jsonFile: ExerciseQuizModel): Promise<void> {
@@ -19,6 +18,7 @@ export default class Quizzes implements Renderable {
         if (!jsonFile.correct && APP_IS_STATIC) {
             notify.alert('error', MSG_QUIZ_SERVER_REQUIRED);
         }
+
         Quizzes.json = jsonFile;
         (await Quizzes.quiz).render(jsonFile, Quizzes.validate);
     }

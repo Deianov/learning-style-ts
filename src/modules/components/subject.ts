@@ -18,10 +18,9 @@ export const subject = (function () {
  *        <div class="subject">
  *          <h3>Home</h3>
  *
- *
  * @param {HTMLElement} parent
- * @param {string} subject  - name
- * @param {ExerciseInfoModel | undefined} obj    - {.... source, sourceUrl, author, authorUrl}
+ * @param {string} subject
+ * @param {ExerciseInfoModel | undefined} obj
  */
 function renderSubject(parent: HTMLElement, subject: string, obj?: ExerciseInfoModel): void {
     const data: SubjectElements[] = [];
@@ -31,7 +30,6 @@ function renderSubject(parent: HTMLElement, subject: string, obj?: ExerciseInfoM
     }
 
     if (obj) {
-        // split to array
         const arr: SubjectElements = [obj.source, obj.sourceUrl, obj.author, obj.authorUrl];
 
         /* separate multiple authors */
@@ -41,18 +39,22 @@ function renderSubject(parent: HTMLElement, subject: string, obj?: ExerciseInfoM
     }
 
     for (let i = 0; i < data.length; i++) {
-        const sourceData: SubjectElements = data[i] || ['', '', '', ''];
-
-        const [source, sourceUrl, author, authorUrl] = sourceData;
-
+        const [source, sourceUrl, author, authorUrl] = data[i];
         const small = dom.element('small', parent);
-        if (source || sourceUrl) {
-            dom.node((i > 0 ? '; ' : '') + 'source: ', small);
-            dom.text('a', small, source || '', formatLink(sourceUrl || ''));
-        }
-        if (author || authorUrl) {
-            dom.node(source ? ', author: ' : 'author: ', small);
-            dom.text('a', small, author || '', formatLink(authorUrl || ''));
+        renderSubjectItem((i > 0 ? '; ' : '') + 'source: ', source, sourceUrl, small);
+        renderSubjectItem(source ? ', author: ' : 'author: ', author, authorUrl, small);
+    }
+}
+
+function renderSubjectItem(prefix: string, label: string | null, href: string | null, parent: HTMLElement): void {
+    if (label || href) {
+        dom.node(prefix, parent);
+        if (href) {
+            const target = href.at(0) === '/' ? '_self' : '_blank';
+            dom.text('a', parent, label || href, {href, target});
+        } else if (label) {
+            // todo: static color
+            dom.text('span', parent, label, 'gray-light');
         }
     }
 }
@@ -76,15 +78,5 @@ function splitSubjectElements(arr: SubjectElements): SubjectElements[] {
         }
         result.push(elements as SubjectElements);
     }
-    console.log(result);
-
     return result;
-}
-
-function formatLink(url: string) {
-    const options: {href: string; target?: string} = {href: url || '#'};
-    if (!['#', '/', '\\'].includes(options.href)) {
-        options.target = '_blank';
-    }
-    return options;
 }

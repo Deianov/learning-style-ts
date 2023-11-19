@@ -1,83 +1,145 @@
-import {breadcrumb, notify, router, topics} from '../../main.js';
+import {breadcrumb, notify, topics} from '../../main.js';
 import {subject} from '../components/subject.js';
 import * as C from '../constants.js';
 import {ExerciseInfoModel} from '../types/models.js';
 import {CallbackRenderContent} from '../types/utils.js';
 import dom from '../utils/dom.js';
+import {Pages, Route, RouterInterface} from './routes.js';
+
+const DOM_ELEMENTS = [
+    'pageheader',
+    'menu',
+    'topics',
+    'article',
+    'header',
+    'control',
+    'content',
+    'messages',
+    'bottom',
+    'cdate',
+    'breadcrumb',
+    'subject',
+    'notify1',
+    'notify2',
+] as const;
+
+type Elements = {
+    [key in (typeof DOM_ELEMENTS)[number]]: HTMLElement;
+};
+
+export const elements: Elements = getDomElements();
 
 export class Page {
-    static elements: {[key: string]: HTMLElement} = {};
+    public static instance: Page;
     private active: boolean = false;
+    private renders: CallbackRenderContent[] = [renderDefault, renderHome];
+
     constructor() {
-        Page.init();
+        Page.instance = this;
     }
-    static init() {
-        // toDo: way to skip ! ?
-        this.elements['pageheader'] = document.getElementsByTagName(C.DOM_PAGEHEADER_TAGNAME)[0] as HTMLElement;
-        this.elements['menu'] = document.getElementsByClassName(C.DOM_MENU_CLASSNAME)[0] as HTMLElement;
-        this.elements['topics'] = document.getElementsByTagName(C.DOM_TOPICS_PARENT_TAGNAME)[0];
-        this.elements['article'] = document.getElementsByTagName(C.DOM_ARTICLE_TAGNAME)[0];
-        this.elements['header'] = document.getElementById(C.DOM_HEADER_ID)!;
-        this.elements['control'] = document.getElementById(C.DOM_CONTROL_ID)!;
-        this.elements['content'] = document.getElementById(C.DOM_CONTENT_ID)!;
-        this.elements['messages'] = document.getElementById(C.DOM_MESSAGES_ID)!;
-        this.elements['bottom'] = document.getElementById(C.DOM_BOTTOM_ID)!;
-        this.elements['cdate'] = document.getElementById(C.DOM_CDATE_ID)!;
-        this.elements['cdate'].textContent = `${new Date().getFullYear()}`;
+    async renderPage(router: RouterInterface, content: boolean) {
+        if (router.route.init) {
+            router.route.init();
+        }
+        const route: Route = router.route;
 
-        const row1 = dom.element('div', this.elements['header'], 'row');
-        const row2 = dom.element('div', this.elements['header'], 'row');
+        // render page
+        this.reset();
+        document.title = router.route.title;
+        await topics.render(router.page === Pages.home ? Pages.cards : router.page);
+        breadcrumb.render(router.getLinks(), router.renderEvent);
+        subject.renderSubject(elements.subject, route.subject);
 
-        dom.element('hr', this.elements['header']);
-        this.elements['breadcrumb'] = dom.element(C.DOM_BREADCRUMB_TAGNAME, row1, C.DOM_BREADCRUMB_CLASSNAME);
-        this.elements['subject'] = dom.element('div', row2, C.DOM_SUBJECT_CLASSNAME);
-        this.elements['notify1'] = dom.element('div', row1, C.DOM_NOTIFY_CLASSNAME);
-        this.elements['notify2'] = dom.element('div', row2, C.DOM_NOTIFY_CLASSNAME);
+        // render content
+        if (content) {
+            const renderIndex = route.render;
+            if (typeof renderIndex === 'number' && renderIndex >= 0 && renderIndex < this.renders.length) {
+                const callback: CallbackRenderContent = this.renders[renderIndex];
+                await callback(elements.content);
+            }
+        }
     }
-    static reset() {
-        notify.clear();
-        this.elements['pageheader'].removeAttribute('style');
-        this.elements['menu'].removeAttribute('style');
-        this.elements['topics'].removeAttribute('style');
-        this.elements['article'].removeAttribute('style');
-        this.elements['control'].innerHTML = '';
-        this.elements['content'].innerHTML = '';
-        this.elements['content'].removeAttribute('style');
-        this.elements['messages'].innerHTML = '';
-        this.elements['bottom'].innerHTML = '';
-    }
-    blankPage(name: string): void {
-        Page.reset();
-        breadcrumb.render(router.getLinks());
-        subject.renderSubject(Page.elements['subject'], name);
-        topics.focusLink();
-    }
-    blankExercise(obj: ExerciseInfoModel): void {
-        Page.reset();
+    renderExercise(router: RouterInterface, obj: ExerciseInfoModel): void {
+        // this.reset();
         const {id, name, category} = obj;
 
-        breadcrumb.render(router.getLinks());
-        breadcrumb.addTopic(category);
-        subject.renderSubject(Page.elements['subject'], name, obj);
-        topics.focusLink(id);
+        topics.focusLinkById(id);
+        breadcrumb.render(router.getLinks(), router.renderEvent, category);
+        subject.renderSubject(elements.subject, name, obj);
+        elements.content.innerHTML = '';
     }
     play(flag: boolean) {
         notify.clear();
-        Page.elements['pageheader']!.style.display = flag ? 'none' : '';
-        Page.elements['menu']!.style.display = flag ? 'none' : '';
-        Page.elements['topics']!.style.display = flag ? 'none' : '';
+        elements.pageheader.style.display = flag ? 'none' : '';
+        elements.menu.style.display = flag ? 'none' : '';
+        elements.topics.style.display = flag ? 'none' : '';
 
         if (flag) {
-            Page.elements['content']!.style.display = '';
+            elements.content.style.display = '';
         }
         this.active = flag;
     }
-    async renderContent(callback: CallbackRenderContent, skip?: boolean) {
-        if (!skip) {
-            callback(Page.elements['content']);
-        }
+    private reset() {
+        notify.clear();
+        elements.pageheader.removeAttribute('style');
+        elements.menu.removeAttribute('style');
+        elements.topics.removeAttribute('style');
+        elements.article.removeAttribute('style');
+        elements.control.innerHTML = '';
+        elements.content.innerHTML = '';
+        elements.content.removeAttribute('style');
+        elements.messages.innerHTML = '';
+        elements.bottom.innerHTML = '';
     }
-    // async renderContent(callback: (...args: any[]) => any, args?: object) {
-    //     await callback(Page.elements['content'], args);
-    // }
+    /*
+    async renderContent(callback: CallbackRenderContent) {
+        callback(Page.elements['content']);
+    }
+    async renderContent(callback: (...args: any[]) => any, args?: object) {
+        await callback(Page.elements['content'], args);
+    }
+    */
+}
+
+function getDomElements(): Elements {
+    const rec: {[key in (typeof DOM_ELEMENTS)[number]]?: HTMLElement} = {};
+    rec.pageheader = dom.getByTagName(C.DOM_PAGEHEADER_TAGNAME);
+    rec.menu = dom.getByClassName(C.DOM_MENU_CLASSNAME);
+    rec.topics = dom.getByTagName(C.DOM_TOPICS_PARENT_TAGNAME);
+    rec.article = dom.getByTagName(C.DOM_ARTICLE_TAGNAME);
+    rec.header = dom.getById(C.DOM_HEADER_ID);
+    rec.control = dom.getById(C.DOM_CONTROL_ID);
+    rec.content = dom.getById(C.DOM_CONTENT_ID);
+    rec.messages = dom.getById(C.DOM_MESSAGES_ID);
+    rec.bottom = dom.getById(C.DOM_BOTTOM_ID);
+    rec.cdate = dom.getById(C.DOM_CDATE_ID);
+    rec.cdate.textContent = `${new Date().getFullYear()}`;
+
+    const row1 = dom.element('div', rec.header, 'row');
+    const row2 = dom.element('div', rec.header, 'row');
+
+    dom.element('hr', rec.header);
+    rec.breadcrumb = dom.element(C.DOM_BREADCRUMB_TAGNAME, row1, C.DOM_BREADCRUMB_CLASSNAME);
+    rec.subject = dom.element('div', row2, C.DOM_SUBJECT_CLASSNAME);
+    rec.notify1 = dom.element('div', row1, C.DOM_NOTIFY_CLASSNAME);
+    rec.notify2 = dom.element('div', row2, C.DOM_NOTIFY_CLASSNAME);
+    // todo: type check: are all elements ?
+    return rec as Elements;
+}
+
+// RENDERS
+
+async function renderHome(parent: HTMLElement) {
+    await debugContent(parent);
+}
+
+async function renderDefault(parent: HTMLElement) {
+    await debugContent(parent);
+
+    // todo: development
+    // notify.btn('error', 'toDo', func);
+}
+
+async function debugContent(parent: HTMLElement) {
+    parent.innerHTML = C.DEBUG_CONTENT;
 }

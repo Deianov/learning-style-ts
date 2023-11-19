@@ -1,5 +1,5 @@
 import {DOM_BOTTOM_ID, DOM_BREADCRUMB_CLASSNAME, DOM_BREADCRUMB_TAGNAME, DOM_HEADER_ID} from '../constants.js';
-import {Links} from '../types/components.js';
+import {Link, Links} from '../types/components.js';
 import {MouseEvents, TagName} from '../types/utils.js';
 import dom from '../utils/dom.js';
 
@@ -148,30 +148,38 @@ class Component extends MyEvent {
         <div class="row">
 
     <ul class="breadcrumb">
-        <li><a href="./">Home</a></li>
-        <li><a value="1" href="javascript:void(0)">Cards</a></li>
-        <li><a href="#">German</a></li>
+        <li><a href="/page=0">Home</a></li>
+        <li><a href="/page=1">Cards</a></li>
+        <li><span>German</span></li>
     </ul>
 */
 class Breadcrumb extends Component {
     constructor(parent = DOM_HEADER_ID) {
         super(parent, 'row', DOM_BREADCRUMB_TAGNAME, DOM_BREADCRUMB_CLASSNAME);
     }
-    render(links: Links) {
+    render(links: Links, event: EventListener | EventListenerObject, current?: string): void {
         super.reset();
-        if (links && this._element) {
-            for (const link of links) {
-                link['href'] = link.href || 'javascript:void(0)';
-                dom.element('a', dom.element('li', this._element), link);
-            }
+        const length = links.length;
+        for (let i = 0; i < length - 1; i++) {
+            this.renderLink(links[i], event);
+        }
+        if (typeof current === 'string') {
+            this.renderLink(links[length - 1], event);
+            this.renderText(current);
+        } else if (length > 0) {
+            this.renderText(links[length - 1].textContent);
         }
     }
-    addTopic(category?: string) {
-        if (category && this._element) {
-            dom.element('a', dom.element('li', this._element), {
-                href: '#',
-                textContent: category,
-            });
+    private renderLink(link: Link, event: EventListener | EventListenerObject) {
+        if (link && this._element) {
+            const li = dom.element('li', this._element);
+            const a = dom.element('a', li, link);
+            a.addEventListener('click', event);
+        }
+    }
+    private renderText(name?: string) {
+        if (name && this._element) {
+            dom.element('span', dom.element('li', this._element), {textContent: name});
         }
     }
 }
