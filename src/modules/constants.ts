@@ -84,8 +84,6 @@ export const PATH_JSON = './json';
     <footer>
             <span id="cdate">
 */
-// type ClassName = 'navbar' | 'breadcrumb' | 'subject' | 'notify-box';
-
 export const DOM_PAGEHEADER_TAGNAME: TagName = 'header';
 export const DOM_MENU_CLASSNAME = 'navbar';
 export const DOM_TOPICS_PARENT_TAGNAME: TagName = 'aside';
@@ -131,7 +129,6 @@ export const enum MSG_KEYBOARD {
 }
 
 // CONSTANTS: MESSAGES - ERROR
-
 export const MSG_QUIZ_SERVER_REQUIRED = 'Server validation is not supported on static version.';
 export const MSG_QUIZ_NOT_FOUND_ANSWERS = 'Not found correct answers.';
 export const MSG_SERVER_REQUIRED = 'Server side required!';
