@@ -1,6 +1,15 @@
-import {APP_IS_STATIC, PATH_JSON} from './constants.js';
-import {Cashable, Category, ExerciseDataModel, ExerciseInfoModel, ExerciseModel, ExercisePropsModel, Link} from './types/models.js';
-import {localRepository} from './web.js';
+import { APP_IS_STATIC, PATH_JSON } from './constants.js';
+import {
+	Cashable,
+	Category,
+	ExerciseDataModel,
+	ExerciseInfoModel,
+	ExerciseModel,
+	ExercisePropsModel,
+	Link,
+} from './types/models.js';
+import objects from './utils/objects.js';
+import { localRepository } from './web.js';
 
 /**
  *  cashing in memory
@@ -58,16 +67,32 @@ const repository = (function () {
     const isStatic = APP_IS_STATIC;
     const server = PATH_JSON;
 
-    // static
-    async function fetchStatic(fileName: string): Promise<Cashable> {
-        const req = server + (fileName.startsWith('/') ? '' : '/') + fileName + '.json';
-        const res = await fetch(req);
-        return await res.json();
+    async function fetchStatic(fileName: string): Promise<Cashable | null> {
+        const req: string = server + (fileName.startsWith('/') ? '' : '/') + fileName + '.json';
+        const res: Response = await fetch(req);
+
+        if (!res.ok) {
+            const msg = 'Failed to fetch data: ' + res.statusText;
+            console.error(msg);
+            // throw new Error(msg);
+            return null;
+        }
+
+        const json: Cashable = await res.json();
+        return json;
+
+        // } catch (error) {
+        //     if (objects.isError(error)) {
+        //         const msg = error.message;
+        //         console.error(msg);
+        //     } else {
+        //         console.error('Unknown error');
+        //     }
+        //     throw error;
+        // }
     }
 
-    // api
     // async function fetchApi(apiPath: string): Promise<Cashable> {
-    //     // toDo: sendRequest(apiPath)
     //     const result: Promise<Cashable> = new Promise((resolve) => {
     //         setTimeout(() => {
     //             resolve('foo');
@@ -77,7 +102,7 @@ const repository = (function () {
     // }
 
     return {
-        async getByName(name: string): Promise<Cashable> {
+        async getByName(name: string): Promise<Cashable | null> {
             // switch between static/api version
             const fun = fetchStatic;
             return await fun(name);
