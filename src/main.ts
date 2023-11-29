@@ -6,6 +6,7 @@ import {Data} from './modules/data.js';
 import {factory} from './modules/factory.js';
 import {elements, Page} from './modules/routes/page.js';
 import {Router} from './modules/routes/router.js';
+import {ExerciseService} from './modules/services/exercise.js';
 
 // init modules
 const modules = (async () => {
@@ -16,21 +17,24 @@ const modules = (async () => {
     const topics = new Topics();
     const notify = new Notify();
     new GoTop();
-
     const navigation = {
         top: new Menu(elements.menu),
     };
+    const exerciseService = new ExerciseService();
 
-    // instances
-    const breadcrumb = await factory.getInstance(Breadcrumb);
+    // instances managed from the factory
+    const breadcrumb = await factory.getInstanceWithArgs(Breadcrumb, elements.header);
 
     // events
     elements.topics.addEventListener('click', router.renderEvent);
 
-    return {data, router, page, topics, breadcrumb, notify, navigation};
+    // add events using factory configuration
+    factory.addProps('Bar', {eventType: 'click', event: exerciseService.controlBarEvent});
+
+    return {data, router, page, topics, breadcrumb, notify, navigation, exerciseService};
 })();
 
-export const {data, router, page, topics, breadcrumb, notify, navigation} = await modules;
+export const {data, router, page, topics, breadcrumb, notify, navigation, exerciseService} = await modules;
 
 // start app
 router.navigate(0, null, router.urlSearchParams());

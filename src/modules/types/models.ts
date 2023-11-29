@@ -34,9 +34,28 @@ export type PropsModel = {
 
 // EXERCISE CARDS
 export interface ExerciseCardsModel extends ExerciseModel {
+    props: PropsCardsModel;
     data: ExerciseDataModel;
 }
+export interface PropsCardsModel extends PropsModel {
+    card: string;
+    label1: string;
+    label2: string;
+    label3?: string;
+}
 export type ExerciseDataModel = string[][];
+
+export interface ExerciseCardsModelAdapted extends ExerciseCardsModel {
+    labels: string[];
+    state: {
+        counts: number[];
+        status: boolean;
+        rows: number;
+        row: number;
+        tabs: boolean[];
+        card: number;
+    };
+}
 
 // EXERCISE QUIZ
 export interface ExerciseQuizModel extends ExerciseModel {

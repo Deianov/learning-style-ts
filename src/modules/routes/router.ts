@@ -1,10 +1,8 @@
-import {navigation} from '../../main.js';
+import {exerciseService, navigation, page} from '../../main.js';
 import {USER} from '../constants.js';
-import {ExerciseService} from '../services/exercise.js';
 import {Links} from '../types/components.js';
 import {strings} from '../utils/strings.js';
 import {url} from '../utils/web.js';
-import {Page} from './page.js';
 import {Pages, Route, RouterInterface, routes} from './routes.js';
 
 /*
@@ -149,12 +147,12 @@ class Router implements RouterInterface {
 
         // render page
         if (State.isNewPage || State.isBlank) {
-            await Page.instance.renderPage(Router.instance, !isNewExercise);
+            await page.renderPage(Router.instance, !isNewExercise);
         }
 
         // render exercise
         if (isNewExercise) {
-            await ExerciseService.render(State.id!);
+            await exerciseService.render(State.id!);
         }
     }
     /** Breadcrumbs, Topics event: Attribute: href = UrlSearchString = /?page=Number&id=Number */

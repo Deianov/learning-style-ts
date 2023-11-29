@@ -30,25 +30,23 @@ type Elements = {
 export const elements: Elements = getDomElements();
 
 export class Page {
-    public static instance: Page;
-    private active: boolean = false;
-    private renders: CallbackRenderContent[] = [renderDefault, renderHome];
+    private readonly renders: CallbackRenderContent[] = [renderDefault, renderHome];
+    public isActive: boolean = false;
 
-    constructor() {
-        Page.instance = this;
-    }
+    constructor() {}
     async renderPage(router: RouterInterface, content: boolean) {
+        this.reset();
         if (router.route.init) {
             router.route.init();
         }
         const route: Route = router.route;
 
         // render page
-        this.reset();
         document.title = router.route.title;
         await topics.render(router.page === Pages.home ? Pages.cards : router.page);
         breadcrumb.render(router.getLinks(), router.renderEvent);
         subject.renderSubject(elements.subject, route.subject);
+        elements.content.innerHTML = '';
 
         // render content
         if (content) {
@@ -60,27 +58,27 @@ export class Page {
         }
     }
     renderExercise(router: RouterInterface, obj: ExerciseInfoModel): void {
-        // this.reset();
+        this.reset();
         const {id, name, category} = obj;
+        this.isActive = false;
 
         topics.focusLinkById(id);
         breadcrumb.render(router.getLinks(), router.renderEvent, category);
         subject.renderSubject(elements.subject, name, obj);
         elements.content.innerHTML = '';
     }
-    play(flag: boolean) {
+    play(isActive: boolean) {
         notify.clear();
-        elements.pageheader.style.display = flag ? 'none' : '';
-        elements.menu.style.display = flag ? 'none' : '';
-        elements.topics.style.display = flag ? 'none' : '';
+        elements.pageheader.style.display = isActive ? 'none' : '';
+        elements.menu.style.display = isActive ? 'none' : '';
+        elements.topics.style.display = isActive ? 'none' : '';
 
-        if (flag) {
+        if (isActive) {
             elements.content.style.display = '';
         }
-        this.active = flag;
+        this.isActive = isActive;
     }
     private reset() {
-        notify.clear();
         elements.pageheader.removeAttribute('style');
         elements.menu.removeAttribute('style');
         elements.topics.removeAttribute('style');
@@ -90,6 +88,7 @@ export class Page {
         elements.content.removeAttribute('style');
         elements.messages.innerHTML = '';
         elements.bottom.innerHTML = '';
+        this.isActive = false;
     }
     /*
     async renderContent(callback: CallbackRenderContent) {

@@ -56,7 +56,7 @@ export const factory = (function () {
         dictionary[name] = props;
 
         if (props.event && props.eventType) {
-            instance.setEvent(props.eventType, props.event);
+            instance._addEvent(props.eventType, props.event);
         }
     }
 

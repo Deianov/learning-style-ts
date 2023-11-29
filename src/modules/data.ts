@@ -1,15 +1,5 @@
-import { APP_IS_STATIC, PATH_JSON } from './constants.js';
-import {
-	Cashable,
-	Category,
-	ExerciseDataModel,
-	ExerciseInfoModel,
-	ExerciseModel,
-	ExercisePropsModel,
-	Link,
-} from './types/models.js';
-import objects from './utils/objects.js';
-import { localRepository } from './web.js';
+import {PATH_JSON} from './constants.js';
+import {Cashable, ExerciseCardsModel, ExerciseCardsModelAdapted} from './types/models.js';
 
 /**
  *  cashing in memory
@@ -64,7 +54,6 @@ const cashingRepository = (function () {
  *  fetch server data
  */
 const repository = (function () {
-    const isStatic = APP_IS_STATIC;
     const server = PATH_JSON;
 
     async function fetchStatic(fileName: string): Promise<Cashable | null> {
@@ -132,8 +121,8 @@ class Data {
             return null;
         }
         if (adaptable) {
-            // res = dataAdapter(res);
-            return null;
+            res = dataAdapter(res as ExerciseCardsModel);
+            return res;
         }
         if (cashable) {
             res = cashingRepository.save(name, res);
@@ -143,15 +132,45 @@ class Data {
     removeCached(): void {
         cashingRepository.reset();
     }
+    // todo
+    async getJsonWithPayload(api: string, data: {username: string; data: string[][]}): Promise<Response> {
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const init = {status: 200, statusText: 'OK'};
+        const res = new Response(blob, init);
+        return res;
+    }
 }
 
-function arrayToMultidimensional(arr: string[], cols: number): string[][] {
-    const res = [];
-    let i = 0;
-    for (let index = 0; index < arr.length; index += cols) {
-        res[i++] = arr.slice(index, index + cols);
-    }
-    return res;
+// function arrayToMultidimensional(arr: string[], cols: number): string[][] {
+//     const res = [];
+//     let i = 0;
+//     for (let index = 0; index < arr.length; index += cols) {
+//         res[i++] = arr.slice(index, index + cols);
+//     }
+//     return res;
+// }
+
+/**
+ * @param {{}} jsonFile base format from server
+ * @returns {{}} result {..., "data":[adapted data], state: {}}
+ */
+function dataAdapter(jsonFile: ExerciseCardsModel): ExerciseCardsModelAdapted {
+    const json = jsonFile;
+    const labels = Object.entries(json.props)
+        .filter((en) => en[0].startsWith('label'))
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map((en) => en[1]);
+    const state = {
+        counts: Array(json.data.length).fill(0),
+        status: false,
+        rows: json.data.length,
+        row: 0,
+        tabs: Array(labels.length).fill(true),
+        card: parseInt(json.props.card),
+    };
+    state.tabs[state.card] = false;
+    const result = {exercise: json.exercise, props: json.props, data: json.data, labels, state};
+    return result;
 }
 
 export {Data};

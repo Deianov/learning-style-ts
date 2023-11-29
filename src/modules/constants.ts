@@ -14,8 +14,8 @@ export const APP_IS_STATIC = true;
 export const production = false;
 export const APP_VERSION = '30.09.2023';
 export const APP_LANG = 'en';
-/** keyboard - 0: default, 1: virtual, 2: virtual (only word keys) **/
-export const APP_KEYBOARD = IS_MOBILE ? 1 : 0;
+/** keyboard - 1: default, 2: virtual, 4: virtual (only word keys) **/
+export const APP_KEYBOARD: {mode: number; size: number} = {mode: IS_MOBILE ? 2 : 1, size: 0};
 
 // CONSTANTS: DEVELOPMENT STATE
 export const USER: {username?: string; pass?: string} = {};
@@ -107,11 +107,7 @@ export const DEBUG_CONTENT = `<svg id="kiwi" xmlns="http://www.w3.org/2000/svg" 
 export const QUIZ_CORRECT_QUESTION_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" shape-rendering="geometricPrecision"><path d="M20 6L9 17l-5-5"/></svg>`;
 
 // CONSTANTS: MESSAGES
-interface Messages {
-    [key: string]: string;
-}
-
-export const MSG_INPUT: Messages = {
+export const MSG_INPUT = {
     again: 'Write this again.',
     placeholder: 'Write this ..',
 };
@@ -124,8 +120,8 @@ export const enum MSG_BNT {
 
 export const enum MSG_KEYBOARD {
     OFF = 'keyboard: system',
-    VIRTUAL = 'keyboard: virtual',
-    AUTO = 'keyboard: virtual (auto)',
+    NORMAL = 'keyboard: virtual',
+    KEYS = 'keyboard: virtual (keys)',
 }
 
 // CONSTANTS: MESSAGES - ERROR

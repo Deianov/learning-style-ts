@@ -3,7 +3,7 @@ import {Quiz} from '../components/exercises/quiz.js';
 import {APP_IS_STATIC, MSG_QUIZ_NOT_FOUND_ANSWERS, MSG_QUIZ_SERVER_REQUIRED} from '../constants.js';
 import {factory} from '../factory.js';
 import {ExerciseQuizModel, PropsQuizModel} from '../types/models.js';
-import {Renderable} from './exercise.js';
+import {Renderable} from './exerciseInterfaces.js';
 
 export default class Quizzes implements Renderable {
     private static json: ExerciseQuizModel;
