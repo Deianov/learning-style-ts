@@ -1,0 +1,20 @@
+{
+    "exercise": {
+        "id": 6,
+        "path": "cards/6",
+        "name": "Test",
+        "category": "German - IT",
+        "description": null,
+        "source": null,
+        "sourceUrl": null,
+        "author": "learning-style.com",
+        "authorUrl": "/",
+        "createdBy": null
+    },
+    "props": {"label1": "abc","card": "1", "label2": "abc"},
+    "data": [
+        ["a", "a"],
+        ["b", "b"],
+        ["c", "c"]
+    ]
+}
