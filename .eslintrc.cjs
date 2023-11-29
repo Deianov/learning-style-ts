@@ -22,7 +22,7 @@ module.exports = {
     },
     plugins: ['@typescript-eslint'],
     rules: {
-        '@typescript-eslint/no-unused-vars': 'off',
+        // '@typescript-eslint/no-unused-vars': 'off',
         eqeqeq: 'error',
     },
 };
