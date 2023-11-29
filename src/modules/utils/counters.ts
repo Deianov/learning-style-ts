@@ -27,12 +27,11 @@ export class ScopeCounter {
         this.state = {};
     }
     getValue(): number {
-        // todo: remove !
-        return (this.isNumber(this.state.value) ? this.state.value : this.stack.slice(-1)[0])!;
+        return this.isNumber(this.state.value) ? this.state.value : this.stack.slice(-1)[0];
     }
     next() {
         if (this.isEmpty()) {
-            this.reset(this.min, this.max);
+            this.reset();
         }
         if (this.hasNext()) {
             if (this.isWaiting()) {
@@ -110,7 +109,7 @@ export class ScopeCounter {
         return this.next();
     }
     /** @returns {number} Between 0 and numbers.length (exclusive) */
-    randomIndex(): number {
+    private randomIndex(): number {
         return Math.floor(Math.random() * this.numbers.length);
     }
     hasNext(): number {
@@ -120,7 +119,7 @@ export class ScopeCounter {
         return this.stack.length;
     }
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
-    isNumber(v: any): v is number {
+    private isNumber(v: any): v is number {
         return typeof v === 'number';
     }
     isValid(): boolean {
@@ -132,14 +131,17 @@ export class ScopeCounter {
     isDone() {
         return !this.numbers.length && !this.waitings.length && this.stack.length;
     }
-    resetState() {
+    private resetState() {
         for (const key in this.state) {
             this.state[key as keyof typeof this.state] = undefined;
         }
     }
-    reset(minInclusive: number, maxExclusive: number) {
+    resetRange(minInclusive: number, maxExclusive: number) {
         this.min = minInclusive;
         this.max = maxExclusive;
+        this.reset;
+    }
+    reset() {
         this.stack.length = 0;
         this.numbers.length = 0;
         this.waitings.length = 0;
@@ -152,9 +154,29 @@ export class ScopeCounter {
             }
         }
     }
+    toggleShuffle(): boolean {
+        this.reset();
+        this.shuffle = !this.shuffle;
+        return this.shuffle;
+    }
+    getResults(): {stack: number; numbers: number; waitings: number; counts: number} {
+        return {
+            stack: this.stack.length,
+            numbers: this.numbers.length,
+            waitings: this.waitings.length,
+            counts: this.counts.length,
+        };
+    }
 }
 
-function SimpleCounter(start = 0) {
+export interface Counter {
+    value(): number;
+    next(): number;
+    back(): number;
+    reset(): void;
+}
+
+export function SimpleCounter(start = 0): Counter {
     const min = start;
     let n = start;
     return {
@@ -235,5 +257,3 @@ function SimpleCounter(start = 0) {
     asserts(counter.waitings.length === 0)
     asserts(true, counter)
 */
-
-export {SimpleCounter};

@@ -1,20 +1,27 @@
 // const charsIgnore = ['.', ',', ':', ';', '_', '?', '!', '`'];
 
 export const strings = {
-    isEmpty(str: string) {
-        return !str || !str.length;
+    isEmpty(str: string): boolean {
+        return str.length === 0;
     },
-    isBlank(str: string) {
-        return !str || !str.trim().length;
+    isBlank(str: string): boolean {
+        return str.trim().length === 0;
     },
-    isValid(str: string) {
-        return typeof str === 'string' && str.trim().length;
+    isValid(str: string): boolean {
+        return str.trim().length > 0;
     },
     clear(str: string): string {
-        return (str || '').trim().replace('  ', ' ');
+        return str.trim().replace('  ', ' ');
     },
     split(text: string): string[] {
         return this.clear(text).split(/([ .,:;_\-?!'`]+)/);
+    },
+    /**
+     * @returns {boolean} true: 'a' === 'A', 'a' === 'ä'
+     */
+    localeCompare(str1: string, str2: string, options?: Intl.CollatorOptions | undefined): boolean {
+        const DEFAULT_OPTIONS: Intl.CollatorOptions = {sensitivity: 'base'};
+        return str1.localeCompare(str2, 'en', options || DEFAULT_OPTIONS) === 0;
     },
 };
 
@@ -62,14 +69,23 @@ export function removeHTML(str: string): string {
  * @param char  _
  * @returns     H___o
  */
-export function maskMiddleChars(str: string, char: string): string {
-    let len;
-    const text = str || '';
-    return strings
-        .split(text.toLowerCase())
-        .map((w) => {
-            len = w.length;
-            return len > 3 ? w.charAt(0) + char.repeat(len - 2) + w.slice(-1) : len > 2 ? w.charAt(0) + char.repeat(len - 1) : w;
-        })
-        .join('');
+
+export function maskMiddleChars(text: string, char: string): string {
+    const words: string[] = strings.split(text.toLowerCase());
+    const wordsMasked: string[] = Array(words.length);
+    let masked,
+        len,
+        i = 0;
+    for (const word of words) {
+        len = word.length;
+        if (len > 3) {
+            masked = word.charAt(0) + char.repeat(len - 2) + word.slice(-1);
+        } else if (len === 3) {
+            masked = word.charAt(0) + char.repeat(len - 1);
+        } else {
+            masked = words.length > 1 ? word : char.repeat(len);
+        }
+        wordsMasked[i++] = masked;
+    }
+    return wordsMasked.join('');
 }

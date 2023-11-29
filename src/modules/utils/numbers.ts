@@ -37,17 +37,20 @@ type TimerResult = {
 
 export class Timer {
     private static DEFAULT_OPTIONS: number = TimerOption.minutes + TimerOption.seconds;
-    private static LOCALE = 'de-DE';
     private static DIGITS = 2;
     private static DIGITS_HUNDREDTHS = 4;
     private static USE_GROUPING = false;
-    private startTime!: number;
-    private endTime!: number;
-    private flags: number;
+    private startTime: number = 0;
+    private endTime: number = 0;
+    private flags: number = Timer.DEFAULT_OPTIONS;
 
-    constructor() {
-        this.start();
-        this.flags = Timer.DEFAULT_OPTIONS;
+    constructor() {}
+    static formatNumber(value: number, minimumIntegerDigits: number = 1, useGrouping: boolean = false): string {
+        const options: Intl.NumberFormatOptions = {
+            minimumIntegerDigits,
+            useGrouping,
+        };
+        return new Intl.NumberFormat(undefined, options).format(value);
     }
     start(): void {
         this.startTime = new Date().getTime();
@@ -55,6 +58,11 @@ export class Timer {
     }
     stop(): void {
         this.endTime = new Date().getTime();
+    }
+    setTime(time: number): Timer {
+        this.startTime = 0;
+        this.endTime = time;
+        return this;
     }
     setOptions(...args: TimerOption[]): void {
         if (args.length === 0) {
@@ -67,46 +75,35 @@ export class Timer {
         return (this.flags & bitmask) > 0;
     }
     result(...args: TimerOption[]): TimerResult {
-        // save options
         const flags_save = this.flags;
-
-        // time in milliseconds
         const time = this.endTime - this.startTime;
-
-        // result with custom options
         if (args.length > 0) {
             this.setOptions(...args);
         }
 
-        // create label
-        const SEC: number = 1000;
-        const MIN: number = SEC * 60;
-        const HRS: number = MIN * 60;
+        const hours = Timer.formatNumber(Math.floor(time / (1000 * 60 * 60)), 1);
+        const minutes = Timer.formatNumber(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)), Timer.DIGITS);
+        const seconds = Timer.formatNumber(Math.floor((time % (1000 * 60)) / 1000), Timer.DIGITS);
+        const milliseconds = Timer.formatNumber(time % 1000, Timer.DIGITS_HUNDREDTHS, Timer.USE_GROUPING);
+
         let label: string = '';
 
-        // hours (Optional)
         if (this.isTrue(TimerOption.hours)) {
-            label = label.concat(Number(Math.floor(time / HRS)).toString(), ':');
+            label = hours;
         }
 
-        // minutes
-        label = label.concat(Math.floor((time % HRS) / MIN).toLocaleString(Timer.LOCALE, {minimumIntegerDigits: Timer.DIGITS}));
-
-        // seconds (Optional)
-        if (this.isTrue(TimerOption.seconds) || this.isTrue(TimerOption.milliseconds)) {
-            label = label.concat(':', Math.floor((time % MIN) / SEC).toLocaleString(Timer.LOCALE, {minimumIntegerDigits: Timer.DIGITS}));
+        if (this.isTrue(TimerOption.minutes)) {
+            label = (label ? label + ':' : '') + minutes;
         }
 
-        // milliseconds (Optional)
+        if (this.isTrue(TimerOption.seconds)) {
+            label = (label ? label + ':' : '') + seconds;
+        }
+
         if (this.isTrue(TimerOption.milliseconds)) {
-            label = label.concat(
-                '.',
-                Math.floor(time % SEC).toLocaleString(Timer.LOCALE, {
-                    minimumIntegerDigits: Timer.DIGITS_HUNDREDTHS,
-                    useGrouping: Timer.USE_GROUPING,
-                }),
-            );
+            label = (label ? label + '.' : '') + milliseconds;
         }
+
         this.flags = flags_save;
 
         return {

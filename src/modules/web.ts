@@ -1,5 +1,5 @@
-import { IS_MOBILE } from './constants';
-import { toBase64, toUTF8 } from './utils/strings.js';
+import {IS_MOBILE} from './constants.js';
+import {toBase64, toUTF8} from './utils/strings.js';
 
 interface Storage {
     getItem(key: string): string | null;
