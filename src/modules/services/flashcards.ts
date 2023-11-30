@@ -1,9 +1,9 @@
 import {data, notify, page} from '../../main.js';
-import Bar, {BAR_IDS} from '../components/bar.js';
+import Bar, {BAR_IDS} from '../components/cards/bar.js';
+import Cards from '../components/cards/cards.js';
+import {UserInput} from '../components/cards/input.js';
+import List from '../components/cards/list.js';
 import {Tags} from '../components/components.js';
-import Cards from '../components/exercises/cards.js';
-import {UserInput} from '../components/input.js';
-import List from '../components/list.js';
 import {APP_IS_STATIC, APP_NAME, MSG_SERVER_REQUIRED, USER} from '../constants.js';
 import {factory} from '../factory.js';
 import {elements} from '../routes/page.js';

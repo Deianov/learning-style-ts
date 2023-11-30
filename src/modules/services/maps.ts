@@ -1,4 +1,4 @@
-import {Country, CountryResource} from '../components/exercises/country.js';
+import {Country, CountryResource} from '../components/maps/country.js';
 import {factory, PATH_RESOURCES_MAPS} from '../factory.js';
 import {ExerciseModel, PropsCountryModel} from '../types/models.js';
 import {Renderable} from './exerciseInterfaces.js';

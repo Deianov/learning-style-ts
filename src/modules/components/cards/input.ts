@@ -1,10 +1,10 @@
-import {notify} from '../../main.js';
-import {APP_KEYBOARD, MSG_INPUT, MSG_KEYBOARD} from '../constants.js';
-import {ExerciseCardsModelAdapted} from '../types/models.js';
-import {Counter, SimpleCounter} from '../utils/counters.js';
-import dom from '../utils/dom.js';
-import numbers from '../utils/numbers.js';
-import {Component} from './components.js';
+import {notify} from '../../../main.js';
+import {APP_KEYBOARD, MSG_INPUT, MSG_KEYBOARD} from '../../constants.js';
+import {ExerciseCardsModelAdapted} from '../../types/models.js';
+import {Counter, SimpleCounter} from '../../utils/counters.js';
+import dom from '../../utils/dom.js';
+import numbers from '../../utils/numbers.js';
+import {Component} from '../components.js';
 import {Stats} from './stats.js';
 
 const UserInputStateKeys = ['done', 'error', 'success', 'repeat', 'examples'] as const;

@@ -1,6 +1,6 @@
-import dom from '../utils/dom.js';
-import {strings} from '../utils/strings.js';
-import {Component} from './components.js';
+import dom from '../../utils/dom.js';
+import {strings} from '../../utils/strings.js';
+import {Component} from '../components.js';
 
 type ListOptions = {
     contenteditable: boolean;

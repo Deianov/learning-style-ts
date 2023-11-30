@@ -1,6 +1,6 @@
-import {ExerciseCardsModelAdapted} from '../types/models.js';
-import dom from '../utils/dom.js';
-import {Component} from './components.js';
+import {ExerciseCardsModelAdapted} from '../../types/models.js';
+import dom from '../../utils/dom.js';
+import {Component} from '../components.js';
 
 const BAR_CLASSNAME = 'bar';
 
