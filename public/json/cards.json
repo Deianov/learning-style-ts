@@ -1,0 +1,21 @@
+[
+    {
+        "category": "German",
+        "links": [
+            {"id": 1, "text": "Die 200 wichtigsten deutschen Adjektive"},
+            {"id": 3, "text": "Diana's top 200"}
+        ]
+    },
+    {
+        "category": "English",
+        "links": [{"id": 4, "text": "The irregular verbs in English"}]
+    },
+    {
+        "category": "German - IT",
+        "links": [
+            {"id": 2, "text": "34 special characters"},
+            {"id": 5, "text": "die Grundlagen"},
+            {"id": 6, "text": "Test"}
+        ]
+    }
+]
