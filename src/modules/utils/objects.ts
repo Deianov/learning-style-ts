@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-const objects = {
+export const objects = {
     isObject(obj: any) {
         return obj && typeof obj === 'object' && !Array.isArray(obj);
     },
@@ -36,5 +36,3 @@ function object_assign(target: Record<string, any>, ...sources: Record<string, a
     }
     return target;
 }
-
-export default objects;
