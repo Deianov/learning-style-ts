@@ -1,4 +1,4 @@
-import {router} from '../../main.js';
+import {router} from '../modules.js';
 import {url} from '../utils/web.js';
 
 export class Menu {

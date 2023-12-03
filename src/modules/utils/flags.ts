@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-abstract class Flags {
+export class Flags {
     static set(flags: number, bitmask: number): number {
         return flags | bitmask;
     }
@@ -88,7 +88,7 @@ abstract class Flags {
     }
 }
 
-class ArrayOfFlags {
+export class ArrayOfFlags {
     private number: number;
     private _length: number;
     constructor() {
@@ -119,5 +119,3 @@ class ArrayOfFlags {
         this.number = Flags.toNumber(arr);
     }
 }
-
-export {Flags, ArrayOfFlags};

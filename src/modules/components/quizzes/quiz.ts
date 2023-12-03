@@ -1,6 +1,6 @@
-import {DEBUG_CONTENT, MSG_BNT, QUIZ_CORRECT_QUESTION_SVG} from '../../constants.js';
+import {DEBUG_CONTENT, QUIZ_CORRECT_QUESTION_SVG} from '../../constants.js';
 import {AnswerModel, ExerciseQuizModel, QuestionModel} from '../../types/models.js';
-import dom from '../../utils/dom.js';
+import {dom} from '../../utils/dom.js';
 import {Flags} from '../../utils/flags.js';
 
 const QUIZ_QUESTIONS_CLASSNAME = 'questions';
@@ -8,6 +8,9 @@ const QUIZ_RESULTS_CLASSNAME = 'results';
 const QUIZ_CARD_CLASSNAME = 'card';
 const QUIZ_VALIDATE_CLASSNAME = 'validate';
 const QUIZ_BNT_CLEAR_CLASSNAME = 'clear';
+const QUIZ_BNT_VALIDATE = 'Validate';
+const QUIZ_BNT_CLEAR = 'Clear';
+const QUIZ_BNT_VIEW = 'view';
 
 type Result = {correct: number; from: number};
 
@@ -43,7 +46,7 @@ export class Quiz {
         // top
         const resultsElement = this.renderResult(this.parent, QUIZ_RESULTS_CLASSNAME, QUIZ_CARD_CLASSNAME)?.firstChild?.lastChild;
         if (resultsElement instanceof HTMLElement) {
-            resultsElement.textContent = MSG_BNT.view;
+            resultsElement.textContent = QUIZ_BNT_VIEW;
             resultsElement.addEventListener('click', validator);
         }
 
@@ -54,7 +57,7 @@ export class Quiz {
         }
 
         // bottom
-        this.bnt = dom.text('button', this.parent, MSG_BNT.validate, QUIZ_VALIDATE_CLASSNAME);
+        this.bnt = dom.text('button', this.parent, QUIZ_BNT_VALIDATE, QUIZ_VALIDATE_CLASSNAME);
         this.bnt.addEventListener('click', validator);
     }
     renderResult(parent: HTMLElement, className: string, classNameCard: string): HTMLElement {
@@ -82,7 +85,7 @@ export class Quiz {
         this.render(this.json, this.validator!);
     }
     validate(correct: number[]): Result {
-        Quiz.instance.bnt!.textContent = MSG_BNT.clear;
+        Quiz.instance.bnt!.textContent = QUIZ_BNT_CLEAR;
         Quiz.instance.bnt!.classList.toggle(QUIZ_BNT_CLEAR_CLASSNAME, true);
 
         const results = this.validateQuestions(correct);
@@ -100,7 +103,7 @@ export class Quiz {
         const resultElement = document.getElementsByClassName(QUIZ_RESULTS_CLASSNAME)[0]?.firstChild;
         if (resultElement) {
             resultElement.firstChild!.textContent = `${correctByUser}/${from}`;
-            resultElement.lastChild!.textContent = MSG_BNT.clear;
+            resultElement.lastChild!.textContent = QUIZ_BNT_CLEAR;
         }
 
         this.isValidated = true;

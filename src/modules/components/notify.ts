@@ -1,7 +1,6 @@
-import {elements} from '../routes/page.js';
 import {CallbackWithArgs} from '../types/utils.js';
-import dom from '../utils/dom.js';
-import objects from '../utils/objects.js';
+import {dom} from '../utils/dom.js';
+import {objects} from '../utils/objects.js';
 
 /**  examples:
 
@@ -175,12 +174,16 @@ const Renders: Renders = {
 
 type StorageItem = {parent: HTMLElement | string; instance: Msg};
 
+type NotifyElements = {
+    [key in ['article', 'messages', 'header', 'notify1', 'notify2'][number]]: HTMLElement;
+};
+
 class Notify {
     private static storage: {[key: string]: StorageItem} = {};
     public renders: Renders;
 
-    constructor() {
-        Notify.defaultInit();
+    constructor(elements: NotifyElements) {
+        Notify.defaultInit(elements);
         this.renders = Renders;
     }
     /**
@@ -243,22 +246,22 @@ class Notify {
         return (parent.getElementsByClassName(className)[0] || dom.element('div', parent, className)) as HTMLElement;
     }
     /** notify.msg();  notify.alert();  notify.title()?;  notify.btn()  */
-    static defaultInit() {
-        let parent = elements['article'];
-        let box = elements['messages'];
+    static defaultInit(elements: NotifyElements) {
+        let parent = elements.article;
+        let box = elements.messages;
         box.classList.toggle(OPTIONS.box.className, true);
 
         const msg = new Msg('msg', box, Type.msg, Renders.SYMBOL);
         Notify.storage['msg'] = {parent, instance: msg};
 
-        parent = elements['header'].firstChild as HTMLElement;
-        box = elements['notify1'];
+        parent = elements.header.firstChild as HTMLElement;
+        box = elements.notify1;
 
         const alert = new Msg('alert', box, Type.alert, Renders.ALERT);
         Notify.storage['alert'] = {parent, instance: alert};
 
         parent = parent.nextSibling as HTMLElement;
-        box = elements['notify2'];
+        box = elements.notify2;
 
         const btn = new Msg('btn', box, Type.msg, Renders.BUTTON);
         Notify.storage['btn'] = {parent, instance: btn};
@@ -272,7 +275,7 @@ class Msg {
     private callback: CallbackWithArgs;
     private options: CustomOptions;
     private timeout: number;
-    private ticker: number | undefined;
+    private ticker: number | NodeJS.Timeout | undefined;
     constructor(name: string, parent: HTMLElement, type: Type, render: Render, options?: CustomOptions) {
         this.storage = [];
         this.name = name;

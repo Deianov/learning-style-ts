@@ -1,4 +1,4 @@
-import dom from '../../utils/dom.js';
+import {dom} from '../../utils/dom.js';
 
 /**
  <div>

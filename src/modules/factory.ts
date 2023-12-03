@@ -1,9 +1,5 @@
 import {EventCallback, MouseEvents, Type, TypeWithArgs} from './types/utils.js';
 
-/** CONSTANTS: MODULES - relative paths to factory */
-export const PATH_SERVICES: string = './services/';
-export const PATH_RESOURCES_MAPS: string = './components/maps/';
-
 interface Props {
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
     instance?: any;

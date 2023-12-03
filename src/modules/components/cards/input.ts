@@ -1,18 +1,28 @@
-import {notify} from '../../../main.js';
-import {APP_KEYBOARD, MSG_INPUT, MSG_KEYBOARD} from '../../constants.js';
+import {APP_KEYBOARD} from '../../constants.js';
+import {notify} from '../../modules.js';
 import {ExerciseCardsModelAdapted} from '../../types/models.js';
 import {Counter, SimpleCounter} from '../../utils/counters.js';
-import dom from '../../utils/dom.js';
-import numbers from '../../utils/numbers.js';
+import {dom} from '../../utils/dom.js';
+import {numbers} from '../../utils/numbers.js';
 import {Component} from '../components.js';
 import {Stats} from './stats.js';
+
+const MSG_INPUT = {
+    again: 'Write this again.',
+    placeholder: 'Write this ..',
+};
+const enum MSG_KEYBOARD {
+    OFF = 'keyboard: system',
+    NORMAL = 'keyboard: virtual',
+    KEYS = 'keyboard: virtual (keys)',
+}
 
 const UserInputStateKeys = ['done', 'error', 'success', 'repeat', 'examples'] as const;
 type UserInputState = {
     [key in (typeof UserInputStateKeys)[number]]: boolean;
 };
 
-class UserInput extends Component<'div'> {
+export class UserInput extends Component<'div'> {
     public successCounter: Counter;
     public errorsCounter: Counter;
 
@@ -484,5 +494,3 @@ class MyKeyboard {
         this.keyboard.innerHTML = '';
     }
 }
-
-export {UserInput};

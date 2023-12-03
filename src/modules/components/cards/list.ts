@@ -1,4 +1,4 @@
-import dom from '../../utils/dom.js';
+import {dom} from '../../utils/dom.js';
 import {strings} from '../../utils/strings.js';
 import {Component} from '../components.js';
 
@@ -6,7 +6,7 @@ type ListOptions = {
     contenteditable: boolean;
 };
 
-export default class List extends Component<'table'> {
+export class List extends Component<'table'> {
     private static CLASSNAME = 'lists';
     private static CLASSNAME_NUMBERING = 'numbering';
 

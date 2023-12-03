@@ -1,5 +1,5 @@
 import {ExerciseCardsModelAdapted} from '../../types/models.js';
-import dom from '../../utils/dom.js';
+import {dom} from '../../utils/dom.js';
 import {Component} from '../components.js';
 
 const BAR_CLASSNAME = 'bar';
@@ -38,7 +38,7 @@ function getBarElements(): BarElements {
     };
 }
 
-export default class Bar extends Component<'div'> {
+export class Bar extends Component<'div'> {
     private json!: ExerciseCardsModelAdapted;
     private tabs: HTMLElement[];
     private elements!: BarElements;

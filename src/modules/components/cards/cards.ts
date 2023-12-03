@@ -1,12 +1,12 @@
 import {ExerciseCardsModelAdapted} from '../../types/models.js';
-import dom from '../../utils/dom.js';
+import {dom} from '../../utils/dom.js';
 import {maskMiddleChars} from '../../utils/strings.js';
 import {Component} from '../components.js';
 
 const CARDS_CLASSNAME = 'cards';
 const CARDS_MASK_CHARACTER = '_';
 
-class Cards extends Component<'div'> {
+export class Cards extends Component<'div'> {
     private json!: ExerciseCardsModelAdapted;
     private cards: Element[];
     private active: number;
@@ -108,5 +108,3 @@ class Cards extends Component<'div'> {
         this.status = undefined;
     }
 }
-
-export default Cards;

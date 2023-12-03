@@ -1,6 +1,4 @@
-import {data, notify, page, router} from '../../main.js';
-import {factory, PATH_SERVICES} from '../factory.js';
-import {elements} from '../routes/page.js';
+import {data, elements, factory, notify, page, router} from '../modules.js';
 import {Cashable, ExerciseInfoModel, ExerciseModel} from '../types/models.js';
 import {Controllable, Playable, Result} from './exerciseInterfaces.js';
 
@@ -10,6 +8,9 @@ type ServiceOptions = {
     adaptable?: boolean;
     controller?: boolean;
 };
+
+/** relative paths from factory */
+const PATH_SERVICES: string = './services/';
 
 const EXERCISE_SERVICES_BY_INDEX: (ServiceOptions | undefined)[] = [
     undefined,

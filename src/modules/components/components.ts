@@ -1,6 +1,6 @@
 import {Link, Links} from '../types/components.js';
 import {MouseEvents, TagName} from '../types/utils.js';
-import dom from '../utils/dom.js';
+import {dom} from '../utils/dom.js';
 
 class EventManager {
     private readonly eventType: MouseEvents;
@@ -18,7 +18,7 @@ class EventManager {
     }
 }
 
-class Component<T extends TagName> {
+export class Component<T extends TagName> {
     private readonly tagName: T;
     private readonly classNameWrapper: string | undefined;
     private readonly className: string;
@@ -70,7 +70,7 @@ class Component<T extends TagName> {
         <li><span>German</span></li>
     </ul>
 */
-class Breadcrumb extends Component<'ul'> {
+export class Breadcrumb extends Component<'ul'> {
     private static CLASSNAME = 'breadcrumb';
     private static CLASSNAME_WRAPPER = 'row';
 
@@ -115,7 +115,7 @@ class Breadcrumb extends Component<'ul'> {
         </svg>
     </button>
 */
-class GoTop {
+export class GoTop {
     static instance: GoTop;
     private element: HTMLElement;
     private disabled: boolean;
@@ -154,7 +154,7 @@ function scrollEvent() {
         ...
     </div>
 */
-class Tags extends Component<'div'> {
+export class Tags extends Component<'div'> {
     private static DOM_TAGS_CLASSNAME = 'tags';
     private static DOM_TAGS_ITEM_CLASSNAME = 'tag';
     private static DOM_TAGS_HEADER_CLASSNAME = 'heading';
@@ -179,5 +179,3 @@ class Tags extends Component<'div'> {
         }
     }
 }
-
-export {Component, Breadcrumb, GoTop, Tags};

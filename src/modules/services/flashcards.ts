@@ -1,20 +1,29 @@
-import {data, notify, page} from '../../main.js';
-import Bar, {BAR_IDS} from '../components/cards/bar.js';
-import Cards from '../components/cards/cards.js';
-import {UserInput} from '../components/cards/input.js';
-import List from '../components/cards/list.js';
-import {Tags} from '../components/components.js';
-import {APP_IS_STATIC, APP_NAME, MSG_SERVER_REQUIRED, USER} from '../constants.js';
-import {factory} from '../factory.js';
-import {elements} from '../routes/page.js';
+import {
+    APP_IS_STATIC,
+    APP_NAME,
+    Bar,
+    BAR_IDS,
+    Cards,
+    data,
+    elements,
+    factory,
+    List,
+    localRepository,
+    notify,
+    page,
+    removeHTML,
+    ScopeCounter,
+    Tags,
+    Timer,
+    TimerOption,
+    USER,
+    UserInput,
+} from '../modules.js';
 import {ExerciseCardsModelAdapted, ExerciseDataModel} from '../types/models.js';
 import {CallbackWithArgs} from '../types/utils.js';
-import {ScopeCounter} from '../utils/counters.js';
-import {Timer, TimerOption} from '../utils/numbers.js';
-import {removeHTML} from '../utils/strings.js';
-import {localRepository} from '../web.js';
 import {Controllable, Playable, Result} from './exerciseInterfaces.js';
 
+const MSG_SERVER_REQUIRED = 'Server side required!';
 const FLASHCARDS_WAITING_TO_REPEAT = 5;
 
 enum PLAY_STEP {
@@ -24,7 +33,7 @@ enum PLAY_STEP {
     REPEAT = 0,
 }
 
-export default class Flashcards implements Playable {
+class Flashcards implements Playable {
     private key: string = '';
     private controller?: Controllable;
     private json!: ExerciseCardsModelAdapted;
@@ -279,3 +288,5 @@ function processExerciseResult(key: string, result: Result): void {
     }
     localRepository.setItem(key, JSON.stringify(obj));
 }
+
+export default Flashcards;

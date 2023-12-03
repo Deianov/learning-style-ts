@@ -1,5 +1,5 @@
-import {exerciseService, navigation, page} from '../../main.js';
 import {USER} from '../constants.js';
+import {exerciseService, navigation, page} from '../modules.js';
 import {Links} from '../types/components.js';
 import {strings} from '../utils/strings.js';
 import {url} from '../utils/web.js';
@@ -62,7 +62,7 @@ abstract class State {
     }
 }
 
-class Router implements RouterInterface {
+export class Router implements RouterInterface {
     static instance: Router;
     page: Pages;
     routes: Route[];
@@ -170,5 +170,3 @@ class Router implements RouterInterface {
 window.onpopstate = async function (event: PopStateEvent) {
     await Router.update(event);
 };
-
-export {Router};

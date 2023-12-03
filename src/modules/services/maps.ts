@@ -1,7 +1,10 @@
-import {Country, CountryResource} from '../components/maps/country.js';
-import {factory, PATH_RESOURCES_MAPS} from '../factory.js';
+import {CountryResource} from '../components/maps/country.js';
+import {Country, factory} from '../modules.js';
 import {ExerciseModel, PropsCountryModel} from '../types/models.js';
 import {Renderable} from './exerciseInterfaces.js';
+
+/** CONSTANTS: MODULES - relative paths to factory ??? */
+const PATH_RESOURCES_MAPS: string = './components/maps/';
 
 class Maps implements Renderable {
     private parent: HTMLElement;

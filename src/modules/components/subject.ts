@@ -1,5 +1,5 @@
 import {ExerciseInfoModel} from '../types/models.js';
-import dom from '../utils/dom.js';
+import {dom} from '../utils/dom.js';
 
 type SubjectElements = [string | null, string | null, string | null, string | null];
 const SUBJECT_ELEMENTS_LENGTH = 4;

@@ -113,4 +113,11 @@ export class Timer {
     }
 }
 
-export default numbers;
+export class DateUtils {
+    private static DEFAULT_LOCALE = 'de-DE';
+    private static formatter = new Intl.DateTimeFormat(DateUtils.DEFAULT_LOCALE, {year: 'numeric', month: '2-digit', day: '2-digit'});
+
+    static getDateString(): string {
+        return DateUtils.formatter.format(new Date());
+    }
+}

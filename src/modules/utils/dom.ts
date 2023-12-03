@@ -3,7 +3,7 @@ import {TagName} from '../types/utils.js';
 // eslint-disable-next-line  @typescript-eslint/no-explicit-any
 type Opt = string | Record<string, any>;
 
-const dom = {
+export const dom = {
     /**
      * @param {string | HTMLElement} v   -  id | element
      * @returns {HTMLElement | null}
@@ -132,5 +132,3 @@ const dom = {
         return svg;
     },
 };
-
-export default dom;

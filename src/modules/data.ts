@@ -102,7 +102,7 @@ const repository = (function () {
 /**
  *  top level of repositories: exposed in services
  */
-class Data {
+export class Data {
     /**
      * @param {string} name Relative resource path. ("fileName" || path/filename)
      * @param {boolean} cashable
@@ -172,5 +172,3 @@ function dataAdapter(jsonFile: ExerciseCardsModel): ExerciseCardsModelAdapted {
     const result = {exercise: json.exercise, props: json.props, data: json.data, labels, state};
     return result;
 }
-
-export {Data};
