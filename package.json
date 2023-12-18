@@ -11,7 +11,7 @@
     "start": "lite-server",
     "lint": "eslint . --ext .ts",
     "prebuild": "node ./dist/build/prebuild.js",
-    "postbuild": "rm -rf ./public/* && node ./dist/build/postbuild.js"
+    "postbuild": "node ./dist/build/postbuild.js"
   },
   "author": "deianov",
   "license": "ISC",

@@ -1,65 +1,64 @@
 'use strict';
-import {build} from './utils/builders.js';
-import {deployToTomcat} from './utils/deploy.js';
-import * as files from './utils/files.js';
-import * as formatters from './utils/formatters.js';
+import {Builder, Task} from './utils/build.js';
+import {Formatter} from './utils/formatters.js';
+import {ImportsManager} from './utils/imports.js';
 
 console.log('Postbuild formats...');
-const PROJECT = 'D:/Development/github/learning-style-ts/';
-const PROJECT_JS = PROJECT + 'dist/';
-const PUBLIC = PROJECT + 'public/';
 
-files.mkdir(PUBLIC);
-files.mkdir(PUBLIC + 'modules');
-files.mkdir(PUBLIC + 'modules/services');
-files.mkdir(PUBLIC + 'modules/components');
-files.mkdir(PUBLIC + 'modules/components/maps');
+const PROJECT_PATH = process.cwd();
+const importsManager = new ImportsManager();
+const formatter = new Formatter();
+Formatter.setSpy('JS', importsManager);
 
-const projectJsFiles = [
-    {copy: 'main.js'},
+/**
+ * {src = '?...'}: dest = path.join(PROJECT_ROOT, '?', dest);
+ * {formatter = true} formatter = formatter.getDefaultFormatter();
+ */
+const PROJECT_TASKS: Task[] = [
+    {dest: 'main.js', src: 'dist/...', formatter: true},
     // modules.js
-    {concat: 'modules/constants.js', formatter: formatters.processJSConstantsFile},
-    {concat: 'modules/utils'},
-    {concat: 'modules/data.js'},
-    {concat: 'modules/factory.js'},
-    {concat: 'modules/web.js'},
-    {concat: 'modules/components'},
-    {concat: 'modules/components/cards'},
-    {concat: 'modules/components/maps/country.js'},
-    {concat: 'modules/components/quizzes'},
-    {concat: 'modules/routes'},
-    {concat: 'modules/services/exercise.js'},
-    {concat: 'modules/modules.js', formatter: formatters.processJSFileSkipMinify},
-    // {concatString: 'export {Timer, TimerOption, ScopeCounter, removeHTML, }'},
-    // modules/services
-    {format: 'modules/services/flashcards.js', formatter: formatters.processJSFileSaveModulesImports},
-    {format: 'modules/services/quizzes.js', formatter: formatters.processJSFileSaveModulesImports},
-    {format: 'modules/services/maps.js', formatter: formatters.processJSFileSaveModulesImports},
-    // modules/components
-    {copy: 'modules/components/maps/maps-de.js'},
-    {copy: 'modules/components/maps/maps-de-full.js'},
-];
-
-const projectFiles = [
+    {
+        dest: '/modules/app.js',
+        concat: [
+            {src: '/dist/modules/constants.js'},
+            {src: '/dist/modules/utils'},
+            {src: '/dist/modules/data.js'},
+            {src: '/dist/modules/factory.js'},
+            {src: '/dist/modules/web.js'},
+            {src: '/dist/modules/components'},
+            {src: '/dist/modules/components/cards'},
+            {src: '/dist/modules/components/maps/country.js'},
+            {src: '/dist/modules/components/quizzes'},
+            {src: '/dist/modules/routes'},
+            {src: '/dist/modules/services/exercise.js'},
+            {src: '/dist/modules/app.js', formatter: formatter.processJSFileSkipMinify},
+        ],
+        formatter: true,
+    },
+    // services
+    {dest: '/modules/services/flashcards.js', src: 'dist...', formatter: true},
+    {dest: '/modules/services/quizzes.js', src: 'dist/...', formatter: true},
+    {dest: '/modules/services/maps.js', src: '/dist...', formatter: true},
+    // components
+    {dest: '/modules/components/maps/maps-de.js', src: '/dist/...'},
+    {dest: '/modules/components/maps/maps-de-full.js', src: '/dist/modules/components/maps/maps-de-full.js'},
     // HTML/CSS
-    {format: 'index.html', formatter: formatters.processHtmlFile},
-    {format: 'login.html', formatter: formatters.processHtmlFile},
-    {format: 'style.css', formatter: formatters.processCssFile},
+    {dest: 'index.html', formatter: formatter.processHtmlFile},
+    {dest: 'login.html', formatter: formatter.processHtmlFile},
+    {dest: 'style.css', formatter: formatter.processCssFile},
     // other
-    {copy: 'json'},
-    {copy: 'assets/fonts'},
-    {copy: 'assets/images/loaders'},
-    {copy: 'assets/images/award.svg'},
-    {copy: 'favicon.ico'},
-    {copy: 'README.md'},
-    {copy: 'robots.txt'},
+    {dest: '/json'},
+    {dest: '/assets/fonts'},
+    {dest: '/assets/images/loaders'},
+    {dest: '/assets/images/award.svg'},
+    {dest: 'favicon.ico'},
+    {dest: 'README.md'},
+    {dest: 'robots.txt'},
 ];
 
-// BUILD
-const jsSingleFile: Buffer[] = await build(PROJECT_JS, PUBLIC, projectJsFiles, formatters.processJSFile);
-let promise;
-promise = await files.write(PUBLIC + 'modules/modules.js', files.concat(jsSingleFile));
-promise = await build(PROJECT, PUBLIC, projectFiles);
-
-// DEPLOY
-deployToTomcat(PUBLIC);
+const builder = new Builder(PROJECT_PATH, PROJECT_TASKS, formatter);
+await builder.init();
+await builder.buildBuffers();
+await importsManager.processImports(builder.getBuffers());
+await builder.toPublic();
+await builder.cpSync('C:/dev/tomcat/webapps/ROOT/');
