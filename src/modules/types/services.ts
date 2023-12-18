@@ -1,4 +1,4 @@
-import {ExerciseModel} from '../types/models.js';
+import {ExerciseModel} from './models.js';
 
 export interface Renderable {
     render(jsonFile: ExerciseModel): Promise<void>;
