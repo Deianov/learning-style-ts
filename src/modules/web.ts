@@ -6,21 +6,6 @@ interface Storage {
     setItem(key: string, data: string, options?: Options): void;
 }
 
-/**
- *  save/read State in cookie|localStorage
- */
-export const localRepository: Storage = (function () {
-    const storage: Storage = IS_MOBILE || !localStorage ? Cookie : localStorage;
-    return {
-        getItem(key: string): string | null {
-            return storage.getItem(key);
-        },
-        setItem(key: string, data: string): void {
-            storage.setItem(key, data);
-        },
-    };
-})();
-
 type Options = {
     expires?: number;
     path?: string;
@@ -87,3 +72,18 @@ export class Cookie {
         });
     }
 }
+
+/**
+ *  save/read State in cookie|localStorage
+ */
+export const localRepository: Storage = (function () {
+    const storage: Storage = IS_MOBILE || !localStorage ? Cookie : localStorage;
+    return {
+        getItem(key: string): string | null {
+            return storage.getItem(key);
+        },
+        setItem(key: string, data: string): void {
+            storage.setItem(key, data);
+        },
+    };
+})();
