@@ -1,5 +1,5 @@
+import {notify} from '../../app.js';
 import {APP_KEYBOARD} from '../../constants.js';
-import {notify} from '../../modules.js';
 import {ExerciseCardsModelAdapted} from '../../types/models.js';
 import {Counter, SimpleCounter} from '../../utils/counters.js';
 import {dom} from '../../utils/dom.js';

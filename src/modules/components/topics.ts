@@ -1,9 +1,9 @@
+import {data} from '../app.js';
 import {APP_IS_STATIC, APP_LANG, ASSETS_LOADER_PUFF, CLASSNAME_FOCUS, DOM_TOPICS_PARENT_TAGNAME} from '../constants.js';
-import {data} from '../modules.js';
 import {Pages} from '../routes/routes.js';
 import {Cashable, Category} from '../types/models.js';
 import {dom} from '../utils/dom.js';
-import {url} from '../utils/web.js';
+import {url} from '../utils/web_utils.js';
 
 class Topics {
     private element: HTMLElement;

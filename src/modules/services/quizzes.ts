@@ -1,11 +1,14 @@
-import {APP_IS_STATIC, factory, notify, Quiz} from '../modules.js';
+import {notify} from '../app.js';
+import {Quiz} from '../components/quizzes/quiz.js';
+import {APP_IS_STATIC} from '../constants.js';
+import {factory} from '../factory.js';
 import {ExerciseQuizModel, PropsQuizModel} from '../types/models.js';
-import {Renderable} from './exerciseInterfaces.js';
+import {Renderable} from '../types/services.js';
 
 const MSG_QUIZ_SERVER_REQUIRED = 'Server validation is not supported on static version.';
 const MSG_QUIZ_NOT_FOUND_ANSWERS = 'Not found correct answers.';
 
-export default class Quizzes implements Renderable {
+class Quizzes implements Renderable {
     private static json: ExerciseQuizModel;
     private static quiz: Promise<Quiz>;
 
@@ -53,3 +56,5 @@ export default class Quizzes implements Renderable {
         }
     }
 }
+
+export default Quizzes;

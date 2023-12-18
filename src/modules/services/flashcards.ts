@@ -1,27 +1,18 @@
-import {
-    APP_IS_STATIC,
-    APP_NAME,
-    Bar,
-    BAR_IDS,
-    Cards,
-    data,
-    elements,
-    factory,
-    List,
-    localRepository,
-    notify,
-    page,
-    removeHTML,
-    ScopeCounter,
-    Tags,
-    Timer,
-    TimerOption,
-    USER,
-    UserInput,
-} from '../modules.js';
+import {data, elements, notify, page} from '../app.js';
+import {Bar, BAR_IDS} from '../components/cards/bar.js';
+import {Cards} from '../components/cards/cards.js';
+import {UserInput} from '../components/cards/input.js';
+import {List} from '../components/cards/list.js';
+import {Tags} from '../components/components.js';
+import USER, {APP_IS_STATIC, APP_NAME} from '../constants.js';
+import {factory} from '../factory.js';
 import {ExerciseCardsModelAdapted, ExerciseDataModel} from '../types/models.js';
+import {Controllable, Playable, Result} from '../types/services.js';
 import {CallbackWithArgs} from '../types/utils.js';
-import {Controllable, Playable, Result} from './exerciseInterfaces.js';
+import {ScopeCounter} from '../utils/counters.js';
+import {Timer, TimerOption} from '../utils/numbers.js';
+import {removeHTML} from '../utils/strings.js';
+import {localRepository} from '../web.js';
 
 const MSG_SERVER_REQUIRED = 'Server side required!';
 const FLASHCARDS_WAITING_TO_REPEAT = 5;

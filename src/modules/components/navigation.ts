@@ -1,5 +1,5 @@
-import {router} from '../modules.js';
-import {url} from '../utils/web.js';
+import {router} from '../app.js';
+import {url} from '../utils/web_utils.js';
 
 export class Menu {
     private element: Element;

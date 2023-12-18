@@ -1,6 +1,7 @@
-import {data, elements, factory, notify, page, router} from '../modules.js';
+import {data, elements, notify, page, router} from '../app.js';
+import {factory} from '../factory.js';
 import {Cashable, ExerciseInfoModel, ExerciseModel} from '../types/models.js';
-import {Controllable, Playable, Result} from './exerciseInterfaces.js';
+import {Controllable, Playable, Result} from '../types/services.js';
 
 type ServiceOptions = {
     fileName: string;

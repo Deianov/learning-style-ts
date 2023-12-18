@@ -1,3 +1,4 @@
+import {breadcrumb, notify, topics} from '../app.js';
 import {subject} from '../components/subject.js';
 import {
     DEBUG_CONTENT,
@@ -16,7 +17,6 @@ import {
     DOM_SUBJECT_CLASSNAME,
     DOM_TOPICS_PARENT_TAGNAME,
 } from '../constants.js';
-import {breadcrumb, notify, topics} from '../modules.js';
 import {ExerciseInfoModel} from '../types/models.js';
 import {CallbackRenderContent} from '../types/utils.js';
 import {dom} from '../utils/dom.js';

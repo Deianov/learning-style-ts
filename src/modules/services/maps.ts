@@ -1,7 +1,7 @@
-import {CountryResource} from '../components/maps/country.js';
-import {Country, factory} from '../modules.js';
+import {Country, CountryResource} from '../components/maps/country.js';
+import {factory} from '../factory.js';
 import {ExerciseModel, PropsCountryModel} from '../types/models.js';
-import {Renderable} from './exerciseInterfaces.js';
+import {Renderable} from '../types/services.js';
 
 /** CONSTANTS: MODULES - relative paths to factory ??? */
 const PATH_RESOURCES_MAPS: string = './components/maps/';

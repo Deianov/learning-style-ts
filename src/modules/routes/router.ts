@@ -1,8 +1,8 @@
-import {USER} from '../constants.js';
-import {exerciseService, navigation, page} from '../modules.js';
+import {exerciseService, navigation, page} from '../app.js';
+import USER from '../constants.js';
 import {Links} from '../types/components.js';
 import {strings} from '../utils/strings.js';
-import {url} from '../utils/web.js';
+import {url} from '../utils/web_utils.js';
 import {Pages, Route, RouterInterface, routes} from './routes.js';
 
 /*
